@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Record",
+    "type": "object",
+    "properties": {
+        "created": {
+            "type": "string"
+        },
+        "modified": {
+            "type": "string"
+        }
+    }
+}

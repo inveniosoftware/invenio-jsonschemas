@@ -1,0 +1,21 @@
+include *.py
+include *.rst
+include LICENSE
+include requirements*.txt
+
+exclude *.yml
+exclude .editorconfig
+exclude .dockerignore
+exclude Dockerfile
+exclude tox.ini
+
+recursive-include docs *
+recursive-include invenio_jsonschemas *.html
+recursive-include invenio_jsonschemas *.js
+recursive-include invenio_jsonschemas *.less
+
+prune examples
+prune tests
+prune docs/_build
+
+recursive-exclude * *.py[co]

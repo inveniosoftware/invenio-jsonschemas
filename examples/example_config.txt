@@ -1,0 +1,4 @@
+from invenio.base.config import PACKAGES as _PACKAGES
+
+PACKAGES = ['samplepkg', 'invenio_jsonschemas'] + _PACKAGES
+JSONSCHEMAS_BASE_SCHEMA = 'base/record-0.1.json'
