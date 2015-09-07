@@ -30,18 +30,16 @@ This collects JSON schemas of all modules. These should be located in the
 
 import os
 
-from flask_registry import PkgResourcesDirDiscoveryRegistry, \
-    RegistryProxy
-
+from flask_registry import PkgResourcesDirDiscoveryRegistry, RegistryProxy
 from werkzeug.local import LocalProxy
 
 
 class RecursiveDirDiscoveryRegistry(PkgResourcesDirDiscoveryRegistry):
 
-    "Discover files in paths."
+    """Discover files in paths."""
 
     def register(self, path):
-        "Register path."
+        """Register path."""
         prefix, filename = path.rsplit(os.path.sep, 1)
         if os.path.isdir(path):
             for root, dirs, files in os.walk(path):
@@ -63,9 +61,9 @@ json_schemas = RegistryProxy(
 )
 
 
+json_schemas_mapping = LocalProxy(lambda: dict(json_schemas))
 """Return dict of schema files that are registered and their filepath.
 
 This does NOT include virtual/generated files, so it might not be
 use to list all available schemas.
 """
-json_schemas_mapping = LocalProxy(lambda: dict(json_schemas))
