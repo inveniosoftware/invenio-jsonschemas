@@ -43,6 +43,7 @@ requirements = [
     'jsonschema>=2.5.0',
     'six>=1.7.2',
     'speaklater>=1.3',
+    'invenio-base>=0.2.1',
 ]
 
 test_requirements = [
