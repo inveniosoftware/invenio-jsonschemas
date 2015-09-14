@@ -1,6 +1,7 @@
 include *.py
 include *.rst
 include LICENSE
+include babel.ini
 include requirements*.txt
 
 exclude *.yml
@@ -13,6 +14,9 @@ recursive-include docs *
 recursive-include invenio_jsonschemas *.html
 recursive-include invenio_jsonschemas *.js
 recursive-include invenio_jsonschemas *.less
+recursive-include invenio_jsonschemas *.mo
+recursive-include invenio_jsonschemas *.po
+recursive-include invenio_jsonschemas *.pot
 
 prune examples
 prune tests
