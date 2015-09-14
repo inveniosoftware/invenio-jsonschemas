@@ -1,31 +1,31 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio-JSONSchemas.
-# Copyright (C) 2015 CERN
+# Copyright (C) 2015 CERN.
 #
-# Invenio is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
+# Invenio-JSONSchemas is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
+# Invenio-JSONSchemas is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+# along with Invenio-JSONSchemas; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
 #
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as an Intergovernmental Organization
-# or submit itself to any jurisdiction.
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 notifications:
   email: false
 
 services:
-  - mysql
   - redis
 
 language: python
@@ -46,19 +46,14 @@ python:
 
 before_install:
   - "travis_retry pip install --upgrade pip"
-  - "travis_retry pip install mock check-manifest"
+  - "travis_retry pip install coveralls unittest2 mock check-manifest"
   - "python requirements.py --extras=$REXTRAS --level=min > .travis-lowest-requirements.txt"
   - "python requirements.py --extras=$REXTRAS --level=pypi > .travis-release-requirements.txt"
   - "python requirements.py --extras=$REXTRAS --level=dev > .travis-devel-requirements.txt"
 
 install:
-  - "travis_retry pip install unittest2"
   - "travis_retry pip install -r .travis-$REQUIREMENTS-requirements.txt --allow-all-external"
-  - "travis_retry pip install -e .[$REXTRAS] --process-dependency-links"
-
-before_script:
-  - "inveniomanage database init --yes-i-know || echo ':('"
-  - "inveniomanage database create --quiet || echo ':('"
+  - "travis_retry pip install -e .[$REXTRAS]"
 
 script:
   - "check-manifest"
@@ -67,3 +62,13 @@ script:
 
 after_success:
   - coveralls
+
+deploy:
+  provider: pypi
+  user: jirikuncar
+  password:
+    secure: 4hCfGqpopcDV6ZNBwoCyN/sbUamDwmyiwsMa4Nz7/H/QCbq/zscEoPgIV8Rz9/mPc865iHQ3ehIgIc1nyk95U1wcgcpHgb1TaAv7EiYwiguM9WbFQYu1b4Sxx+BmyYulE8YqdnpQW/uOCRMaoLh612fqf8ByGxaqtXwGcaFxe6DtxqLcVulVrFD1cg4RIeM84mVoC6Ip0EM0xhDMRAMBL3wH9yTqT3Qs3v0/I75g0rhGya5/IS113iVJIk0/g3yRm0N2UybmTFw25yxFfW0BBuPLlEudANywgE24bBTycMg4v2avqVPsR/1pB9AwCmq3HbrAjZf37lQ98/mX/Zg+nJMiAM6sa7tq4J6XuYZVsAhc1ybjNDlmvxO7k9FE4vbGWKK5lK7eIVu+QQGq9k5RyKQnrJhkjEpA81zoU3vSHDvkMRkiMxUKfE3cUWmKd7mHd/MdSR6sfDpdrGcML/o2EVovhofAMnL/kfy7D7cCBuZjxPCrrR2BIBiMf7v96N8jOaNWyYz/KhL1kSg74zcf/iPdZm4lWL8JIqaw1DaRlkPIzUhTPN6O4/vlyjg9N03Pn0yYpCFmMZlyCQQZNx6Nk1hE7pitHcCnTuChWgCVtD/iZZPAZwpGbu+Fb2aEJTxXBXUICchkFR7mzVvPjHrdmZp23ivRDGzhm7si+djxT0c=
+  distributions: "compile_catalog sdist bdist_wheel"
+  on:
+    tags: true
+    python: "2.7"
