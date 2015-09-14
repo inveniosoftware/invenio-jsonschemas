@@ -41,7 +41,9 @@
         :target: https://github.com/inveniosoftware/invenio-schema/blob/master/LICENSE
 
 
-Invenio-JSONSchemas
+Invenio module for building and serving JSONSchemas.
+
+*This is an experimental developer preview release.*
 
 * Free software: GPLv2 license
 * Documentation: https://invenio-schema.readthedocs.org.

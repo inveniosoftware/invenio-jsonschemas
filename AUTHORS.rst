@@ -24,6 +24,5 @@
 Authors
 =======
 
-Invenio-JSONSchemas
-
 - Marco Neumann <marco@crepererum.net>
+- Jiri Kuncar <jiri.kuncar@cern.ch>

@@ -22,17 +22,22 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio-JSONSchemas, responsible for the JSON schema business.
+"""Invenio module for building and serving JSONSchemas.
 
 Invenio-JSONSchemas
 -------------------
-This module will collect all static files which are located under `schema/`
+
+This module will collect all files which are located in `jsonschemas` modules
 and will generate bundles that optimize these files. The generated files will
-be served using the `schema.schema` endpoint (located under `/schema/<path>`
-by default).
+be served using the `schema.schema` endpoint (located under `/schema/<path>` by
+default).
 
 Furthermore it will generate `allOf` schemas for every files located under
 `schema/forms` and merge it using a record schema. The produces schema files
 will also be located under the `schema.schema` endpoint and will have a
 `records/` prefix instead of `forms/`.
 """
+
+from .version import __version__
+
+__all__ = ('__version__', )
