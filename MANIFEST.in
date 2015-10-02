@@ -1,7 +1,7 @@
 include *.py
 include *.rst
 include LICENSE
-include babel.ini
+include babel.ini pytest.ini
 include requirements*.txt
 
 exclude *.yml
