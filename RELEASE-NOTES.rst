@@ -24,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   http://invenio-jsonschemas.readthedocs.org/en/v0.1.0
+   http://pythonhosted.org/invenio-jsonschemas/
 
 Happy hacking and thanks for flying Invenio-JSONSchemas.
 

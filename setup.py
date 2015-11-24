@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Invenio-JSONSchemas.
+# This file is part of Invenio.
 # Copyright (C) 2015 CERN.
 #
-# Invenio-JSONSchemas is free software; you can redistribute it
+# Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio-JSONSchemas is distributed in the hope that it will be
+# Invenio is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio-JSONSchemas; if not, write to the
+# along with Invenio; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -27,35 +27,46 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
-requirements = [
-    "Flask>=0.10.1",
-    "Flask-Babel>=0.9",
-    "Flask-Breadcrumbs>=0.2",
-    "Flask-Cache>=0.12",
-    "Flask-Registry>=0.2",
-    'jsonpointer>=1.9',
-    'jsonschema>=2.5.0',
-    'six>=1.7.2',
-    'speaklater>=1.3',
-    'invenio-base>=0.2.1',
-]
-
-test_requirements = [
-    'coverage>=4.0.0',
-    'pytest-cov>=2.1.0',
+tests_require = [
+    'check-manifest>=0.25',
+    'coverage>=4.0',
+    'isort>=4.2.2',
+    'pep257>=0.7.0',
+    'pytest-cache>=1.0',
+    'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
+    'mock>=1.3.0',
 ]
+
+extras_require = {
+    'docs': [
+        "Sphinx>=1.3",
+    ],
+    'tests': tests_require,
+}
+
+extras_require['all'] = []
+for reqs in extras_require.values():
+    extras_require['all'].extend(reqs)
+
+setup_requires = [
+]
+
+install_requires = [
+    'Flask>=0.10',
+]
+
+packages = find_packages()
 
 
 class PyTest(TestCommand):
-
     """PyTest Test."""
 
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
@@ -69,14 +80,17 @@ class PyTest(TestCommand):
         except ImportError:
             from configparser import ConfigParser
         config = ConfigParser()
-        config.read('setup.cfg')
+        config.read('pytest.ini')
         self.pytest_args = config.get('pytest', 'addopts').split(' ')
 
     def finalize_options(self):
         """Finalize pytest."""
         TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
+        if hasattr(self, '_test_args'):
+            self.test_suite = ''
+        else:
+            self.test_args = []
+            self.test_suite = True
 
     def run_tests(self):
         """Run tests."""
@@ -98,25 +112,23 @@ setup(
     long_description=readme + '\n\n' + history,
     keywords='invenio json schema',
     license='GPLv2',
-    author='Invenio Software Collaboration',
+    author='CERN',
     author_email='info@invenio-software.org',
-    url='https://github.com/inveniosoftware/invenio-schema',
-    packages=[
-        'invenio_jsonschemas',
-    ],
+    url='https://github.com/inveniosoftware/invenio-jsonschemas',
+    packages=packages,
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    install_requires=requirements,
-    extras_require={
-        'docs': [
-            'Sphinx>=1.3',
-            'sphinx_rtd_theme>=0.1.7'
+    entry_points={
+        'invenio_base.apps': [
+            'invenio_jsonschemas = invenio_jsonschemas:InvenioJSONSchemas',
         ],
-        'tests': test_requirements
     },
+    extras_require=extras_require,
+    install_requires=install_requires,
+    setup_requires=setup_requires,
+    tests_require=tests_require,
     classifiers=[
-        'Development Status :: 1 - Planning',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
@@ -125,12 +137,12 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 2',
-        # 'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        # 'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.3',
-        # 'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Development Status :: 1 - Planning',
     ],
-    tests_require=test_requirements,
     cmdclass={'test': PyTest},
 )

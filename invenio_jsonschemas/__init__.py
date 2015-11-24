@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Invenio-JSONSchemas.
+# This file is part of Invenio.
 # Copyright (C) 2015 CERN.
 #
-# Invenio-JSONSchemas is free software; you can redistribute it
+# Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
 #
-# Invenio-JSONSchemas is distributed in the hope that it will be
+# Invenio is distributed in the hope that it will be
 # useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Invenio-JSONSchemas; if not, write to the
+# along with Invenio; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307, USA.
 #
@@ -22,22 +22,11 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio module for building and serving JSONSchemas.
+"""Invenio module for building and serving JSONSchemas."""
 
-Invenio-JSONSchemas
--------------------
+from __future__ import absolute_import, print_function
 
-This module will collect all files which are located in `jsonschemas` modules
-and will generate bundles that optimize these files. The generated files will
-be served using the `schema.schema` endpoint (located under `/schema/<path>` by
-default).
-
-Furthermore it will generate `allOf` schemas for every files located under
-`schema/forms` and merge it using a record schema. The produces schema files
-will also be located under the `schema.schema` endpoint and will have a
-`records/` prefix instead of `forms/`.
-"""
-
+from .ext import InvenioJSONSchemas
 from .version import __version__
 
-__all__ = ('__version__', )
+__all__ = ('__version__', 'InvenioJSONSchemas')

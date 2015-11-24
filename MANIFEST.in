@@ -1,25 +1,43 @@
-include *.py
+# -*- coding: utf-8 -*-
+#
+# This file is part of Invenio.
+# Copyright (C) 2015 CERN.
+#
+# Invenio is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# Invenio is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Invenio; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA 02111-1307, USA.
+#
+# In applying this license, CERN does not
+# waive the privileges and immunities granted to it by virtue of its status
+# as an Intergovernmental Organization or submit itself to any jurisdiction.
+
+# Check manifest will not automatically add these two files:
+include .dockerignore
+include .editorconfig
+
+# added by check_manifest.py
+include *.json
 include *.rst
+include *.sh
+include *.txt
 include LICENSE
-include babel.ini pytest.ini
-include requirements*.txt
-
-exclude *.yml
-exclude .editorconfig
-exclude .dockerignore
-exclude Dockerfile
-exclude tox.ini
-
-recursive-include docs *
-recursive-include invenio_jsonschemas *.html
-recursive-include invenio_jsonschemas *.js
-recursive-include invenio_jsonschemas *.less
-recursive-include invenio_jsonschemas *.mo
-recursive-include invenio_jsonschemas *.po
-recursive-include invenio_jsonschemas *.pot
-
-prune examples
-prune tests
-prune docs/_build
-
-recursive-exclude * *.py[co]
+include pytest.ini
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include examples *.py
+recursive-include tests *.py
+recursive-include examples *.json
+recursive-include examples *.py
