@@ -30,8 +30,13 @@ from __future__ import absolute_import, print_function
 import json
 import os
 
+import mock
 import pytest
 from flask import Flask
+from jsonresolver import JSONResolver
+from jsonresolver.contrib.jsonschema import ref_resolver_factory
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 
 from invenio_jsonschemas import InvenioJSONSchemas
 from invenio_jsonschemas.errors import JSONSchemaDuplicate, JSONSchemaNotFound
@@ -79,6 +84,7 @@ def build_schemas(id):
 
 
 def test_api(app, dir_factory):
+    """Test API."""
     ext = InvenioJSONSchemas(app, entry_point_group=None)
     schema_files = build_schemas(1)
     with dir_factory(schema_files) as directory:
@@ -104,6 +110,7 @@ def test_api(app, dir_factory):
 
 
 def test_register_schema(app, dir_factory):
+    """Test register schema."""
     ext = InvenioJSONSchemas(app, entry_point_group=None)
     schema_files = build_schemas(1)
     with dir_factory(schema_files) as directory:
@@ -120,6 +127,7 @@ def test_register_schema(app, dir_factory):
 
 
 def test_redefine(app, dir_factory):
+    """Test redefine."""
     ext = InvenioJSONSchemas(app, entry_point_group=None)
     schema_files = build_schemas(1)
     with dir_factory(schema_files) as dir1, \
@@ -190,3 +198,37 @@ def test_alternative_entry_point_group_init(app, pkg_factory,
         ext = ext.init_app(app, entry_point_group=entry_point_group)
         # Test if all the schemas are correctly found
         assert set(ext.list_schemas()) == set(all_schemas.keys())
+
+
+def mock_get_schema(self, path):
+    """Mock the ``get_schema`` method of InvenioJSONSchemasState."""
+    assert path == 'some_schema.json'
+    ret_schema = {
+        "$schema": "http://json-schema.org/schema#",
+        "id": "http://localhost/schemas/some_schema.json",
+        "type": "object",
+        "properties": {
+            "foo": {"type": "string", },
+            "bar": {"type": "integer", },
+        }
+    }
+    return ret_schema
+
+
+@mock.patch('invenio_jsonschemas.ext.InvenioJSONSchemasState.get_schema',
+            mock_get_schema)
+def test_jsonresolver():
+    """Test extension initialization."""
+    app = Flask('testapp')
+    InvenioJSONSchemas(app)
+    assert 'invenio-jsonschemas' in app.extensions
+    with app.app_context():
+        json_resolver = JSONResolver(
+            plugins=['invenio_jsonschemas.jsonresolver', ])
+        schema = {'$ref': 'http://localhost/schemas/some_schema.json'}
+        resolver_cls = ref_resolver_factory(json_resolver)
+        resolver = resolver_cls.from_schema(schema)
+        with pytest.raises(ValidationError) as exc_info:
+            validate({'foo': 'foo_value', 'bar': "not_an_int"}, schema,
+                     resolver=resolver)
+        assert exc_info.value.schema == {'type': 'integer'}

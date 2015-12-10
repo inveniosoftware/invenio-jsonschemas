@@ -37,6 +37,7 @@ tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
     'isort>=4.2.2',
+    'jsonresolver>=0.1.1',
     'pep257>=0.7.0',
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
@@ -123,6 +124,9 @@ setup(
         'invenio_base.apps': [
             'invenio_jsonschemas = invenio_jsonschemas:InvenioJSONSchemas',
         ],
+        'invenio_records.jsonresolver': [
+            'invenio_jsonschemas = invenio_jsonschemas.jsonresolver',
+        ]
     },
     extras_require=extras_require,
     install_requires=install_requires,
