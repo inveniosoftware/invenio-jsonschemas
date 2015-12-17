@@ -109,6 +109,46 @@ def test_api(app, dir_factory):
         assert exc_info.value.schema == 'not_existing_schema.json'
 
 
+class mock_open(object):
+    """Mock the builtin 'open' and count the file requests."""
+    counter = 0
+
+    def __init__(self, path):
+        """Initialize the open with a path."""
+        self.path = path
+
+    def __enter__(self, *args, **kwargs):
+        """Context enter."""
+        self.f = open(self.path)
+        mock_open.counter += 1
+        return self.f
+
+    def __exit__(self, *args, **kwargs):
+        """Context exit."""
+        self.f.close()
+
+
+def test_cache(app, dir_factory):
+    """Test cached schema loading."""
+    m = mock_open
+    with mock.patch('invenio_jsonschemas.ext.open', m):
+        ext = InvenioJSONSchemas(app, entry_point_group=None)
+        schema_files = build_schemas(1)
+
+        with dir_factory(schema_files) as directory:
+            ext.register_schemas_dir(directory)
+            assert m.counter == 0
+            ext.get_schema('rootschema_1.json')
+            assert m.counter == 1
+            ext.get_schema('rootschema_1.json')
+            ext.get_schema('rootschema_1.json')
+            assert m.counter == 1
+            ext.get_schema('sub1/subschema_1.json')
+            assert m.counter == 2
+            ext.get_schema('sub1/subschema_1.json')
+            assert m.counter == 2
+
+
 def test_register_schema(app, dir_factory):
     """Test register schema."""
     ext = InvenioJSONSchemas(app, entry_point_group=None)
@@ -173,7 +213,7 @@ def test_view(app, pkg_factory, mock_entry_points):
                 assert res.status_code == 200
                 assert json.loads(schema) == \
                     json.loads(res.get_data(as_text=True))
-            res = client.get("/nonexisting")
+            res = client.get("{0}/nonexisting".format(endpoint))
             assert res.status_code == 404
 
 
