@@ -34,6 +34,11 @@ import pkg_resources
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
 from .views import create_blueprint
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from functools32 import lru_cache
+
 
 class InvenioJSONSchemasState(object):
     """InvenioJSONSchemas state and api."""
@@ -93,12 +98,12 @@ class InvenioJSONSchemasState(object):
             raise JSONSchemaNotFound(path)
         return os.path.join(self.schemas[path], path)
 
+    @lru_cache(maxsize=1000)
     def get_schema(self, path):
         """Retrieve a schema.
 
         :param path: schema's relative path.
         """
-        # TODO: add a cache
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
         with open(os.path.join(self.schemas[path], path)) as file:
