@@ -134,7 +134,7 @@ class InvenioJSONSchemas(object):
         """Extension initialization."""
         self.kwargs = kwargs
         if app:
-            self._state = self.init_app(app, **kwargs)
+            self.init_app(app, **kwargs)
 
     def init_app(self, app, entry_point_group=None):
         """Flask application initialization."""
@@ -159,7 +159,7 @@ class InvenioJSONSchemas(object):
             url_prefix=app.config[InvenioJSONSchemas.CONFIG_ENDPOINT]
         )
 
-        app.extensions['invenio-jsonschemas'] = state
+        self._state = app.extensions['invenio-jsonschemas'] = state
         return state
 
     def init_config(self, app):
