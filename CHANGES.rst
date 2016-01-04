@@ -25,6 +25,17 @@
 Changes
 =======
 
-Version 0.1.0 (release 2015-12-04)
+Version 1.0.0a2 (release 2016-01-04)
+------------------------------------
+
+Improved features
+~~~~~~~~~~~~~~~~~
+
+- Cache for schemas loading.
+
+- Local schemas resolving using JSONResolver.
+
+Version 1.0.0a1 (release 2015-12-04)
+------------------------------------
 
 - Initial public release.
