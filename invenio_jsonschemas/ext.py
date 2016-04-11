@@ -193,7 +193,7 @@ class InvenioJSONSchemas(object):
         """Initialize configuration."""
         app.config.setdefault(InvenioJSONSchemas.CONFIG_ENDPOINT,
                               '/schemas')
-        app.config.setdefault('JSONSCHEMAS_HOST', 'http://localhost')
+        app.config.setdefault('JSONSCHEMAS_HOST', 'localhost')
 
     def __getattr__(self, name):
         """Proxy to state object."""
