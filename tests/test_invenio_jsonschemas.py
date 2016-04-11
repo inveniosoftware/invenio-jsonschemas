@@ -272,3 +272,27 @@ def test_jsonresolver():
             validate({'foo': 'foo_value', 'bar': "not_an_int"}, schema,
                      resolver=resolver)
         assert exc_info.value.schema == {'type': 'integer'}
+
+
+def test_url_mapping(app, dir_factory):
+    """Test register schema."""
+    app.config['SERVER_NAME'] = 'example.org'
+    app.config['JSONSCHEMAS_HOST'] = 'inveniosoftware.org'
+
+    ext = InvenioJSONSchemas(app, entry_point_group=None)
+    schema_files = build_schemas(1)
+
+    with dir_factory(schema_files) as directory:
+        ext.register_schemas_dir(directory)
+        with app.app_context():
+            assert 'sub1/subschema_1.json' == ext.url_to_path(
+                'http://inveniosoftware.org/schemas/sub1/subschema_1.json')
+            assert ext.url_to_path(
+                'http://inveniosoftware.org/schemas/invalid.json') is None
+            assert ext.url_to_path(
+                'http://example.org/schemas/sub1/subschema_1.json') is None
+
+            assert (
+                'http://inveniosoftware.org/schemas/sub1/subschema_1.json'
+            ) == ext.path_to_url('sub1/subschema_1.json')
+            assert ext.path_to_url('invalid.json') is None

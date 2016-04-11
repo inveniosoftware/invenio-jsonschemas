@@ -31,6 +31,10 @@ import os
 
 import pkg_resources
 
+from six.moves.urllib.parse import urlsplit
+from werkzeug.exceptions import HTTPException
+from werkzeug.routing import Map, Rule
+
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
 from .views import create_blueprint
 
@@ -50,6 +54,11 @@ class InvenioJSONSchemasState(object):
         """
         self.app = app
         self.schemas = {}
+        self.url_map = Map([Rule(
+            '{0}/<path:path>'.format(self.app.config['JSONSCHEMAS_ENDPOINT']),
+            endpoint='schema',
+            host=self.app.config['JSONSCHEMAS_HOST'],
+        )], host_matching=True)
 
     def register_schemas_dir(self, directory):
         """Recursively register all json-schemas in a directory.
@@ -106,8 +115,8 @@ class InvenioJSONSchemasState(object):
         """
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
-        with open(os.path.join(self.schemas[path], path)) as file:
-            return json.load(file)
+        with open(os.path.join(self.schemas[path], path)) as file_:
+            return json.load(file_)
 
     def list_schemas(self):
         """List all JSON-schema names.
@@ -116,6 +125,24 @@ class InvenioJSONSchemasState(object):
         :rtype: list
         """
         return self.schemas.keys()
+
+    def url_to_path(self, url):
+        """Convert schema URL to path."""
+        parts = urlsplit(url)
+        try:
+            loader, args = self.url_map.bind(parts.netloc).match(parts.path)
+            path = args.get('path')
+            if loader == 'schema' and path in self.schemas:
+                return path
+        except HTTPException:
+            return None
+
+    def path_to_url(self, path):
+        """Build URL from a path."""
+        if path not in self.schemas:
+            return None
+        return self.url_map.bind(self.app.config['JSONSCHEMAS_HOST']).build(
+            'schema', values={'path': path}, force_external=True)
 
 
 class InvenioJSONSchemas(object):
