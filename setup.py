@@ -124,6 +124,9 @@ setup(
         'invenio_base.apps': [
             'invenio_jsonschemas = invenio_jsonschemas:InvenioJSONSchemas',
         ],
+        'invenio_base.api_apps': [
+            'invenio_jsonschemas = invenio_jsonschemas:InvenioJSONSchemas',
+        ],
         'invenio_records.jsonresolver': [
             'invenio_jsonschemas = invenio_jsonschemas.jsonresolver',
         ]
