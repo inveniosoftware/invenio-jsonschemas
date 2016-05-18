@@ -108,15 +108,17 @@ class InvenioJSONSchemasState(object):
         return os.path.join(self.schemas[path], path)
 
     @lru_cache(maxsize=1000)
-    def get_schema(self, path):
+    def get_schema(self, path, **json_load_kwargs):
         """Retrieve a schema.
 
         :param path: schema's relative path.
+        :param **json_load_kwargs: All keywords of this method are passed as
+            keywords to JSON loader function ``json.load``.
         """
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
         with open(os.path.join(self.schemas[path], path)) as file_:
-            return json.load(file_)
+            return json.load(file_, **json_load_kwargs)
 
     def list_schemas(self):
         """List all JSON-schema names.
