@@ -138,8 +138,8 @@ html_theme_options = {
     'github_banner': True,
     'show_powered_by': False,
     'extra_nav_links': {
-        'invenio-jsonschemas@GitHub': 'http://github.com/inveniosoftware/invenio-jsonschemas',
-        'invenio-jsonschemas@PyPI': 'http://pypi.python.org/pypi/invenio-jsonschemas/',
+        'invenio-jsonschemas@GitHub': 'https://github.com/inveniosoftware/invenio-jsonschemas',
+        'invenio-jsonschemas@PyPI': 'https://pypi.python.org/pypi/invenio-jsonschemas/',
     }
 }
 
@@ -330,3 +330,6 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
+
+# Autodoc configuraton.
+autoclass_content = 'both'
