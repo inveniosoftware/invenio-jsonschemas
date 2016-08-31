@@ -25,6 +25,29 @@
 API Docs
 ========
 
-invenio_jsonschemas
--------------------
+.. automodule:: invenio_jsonschemas.ext
+   :members:
 
+Config
+------
+
+.. automodule:: invenio_jsonschemas.config
+   :members:
+
+Errors
+------
+
+.. automodule:: invenio_jsonschemas.errors
+   :members:
+
+JSON resolver
+-------------
+
+.. automodule:: invenio_jsonschemas.jsonresolver
+   :members:
+
+Views
+-------------
+
+.. automodule:: invenio_jsonschemas.views
+   :members:

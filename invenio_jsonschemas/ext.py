@@ -35,6 +35,7 @@ from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
 
+from . import config
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
 from .views import create_blueprint
 
@@ -91,8 +92,11 @@ class InvenioJSONSchemasState(object):
     def get_schema_dir(self, path):
         """Retrieve the directory containing the given schema.
 
-        :param path: schema path, relative to the directory when it was
-        registered.
+        :param path: Schema path, relative to the directory where it was
+            registered.
+        :raises invenio_jsonschemas.errors.JSONSchemaNotFound: If no schema
+            was found in the specified path.
+        :returns: The schema directory.
         """
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
@@ -102,6 +106,9 @@ class InvenioJSONSchemasState(object):
         """Compute the schema's absolute path from a schema relative path.
 
         :param path: relative path of the schema.
+        :raises invenio_jsonschemas.errors.JSONSchemaNotFound: If no schema
+            was found in the specified path.
+        :returns: The absolute path.
         """
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
@@ -112,6 +119,9 @@ class InvenioJSONSchemasState(object):
         """Retrieve a schema.
 
         :param path: schema's relative path.
+        :raises invenio_jsonschemas.errors.JSONSchemaNotFound: If no schema
+            was found in the specified path.
+        :returns: The schema in a dictionary form.
         """
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
@@ -127,7 +137,11 @@ class InvenioJSONSchemasState(object):
         return self.schemas.keys()
 
     def url_to_path(self, url):
-        """Convert schema URL to path."""
+        """Convert schema URL to path.
+
+        :param url: The schema URL.
+        :returns: The schema path or ``None`` if the schema can't be resolved.
+        """
         parts = urlsplit(url)
         try:
             loader, args = self.url_map.bind(parts.netloc).match(parts.path)
@@ -138,7 +152,11 @@ class InvenioJSONSchemasState(object):
             return None
 
     def path_to_url(self, path):
-        """Build URL from a path."""
+        """Build URL from a path.
+
+        :param path: relative path of the schema.
+        :returns: The schema complete URL or ``None`` if not found.
+        """
         if path not in self.schemas:
             return None
         return self.url_map.bind(self.app.config['JSONSCHEMAS_HOST']).build(
@@ -158,13 +176,21 @@ class InvenioJSONSchemas(object):
     CONFIG_ENDPOINT = 'JSONSCHEMAS_ENDPOINT'
 
     def __init__(self, app=None, **kwargs):
-        """Extension initialization."""
+        """Extension initialization.
+
+        :param app: The Flask application. (Default: ``None``)
+        """
         self.kwargs = kwargs
         if app:
             self.init_app(app, **kwargs)
 
     def init_app(self, app, entry_point_group=None):
-        """Flask application initialization."""
+        """Flask application initialization.
+
+        :param app: The Flask application.
+        :param entry_point_group: The group entry point to load extensions.
+            (Default: ``invenio_jsonschemas.schemas``)
+        """
         self.init_config(app)
 
         if not entry_point_group:
@@ -191,9 +217,9 @@ class InvenioJSONSchemas(object):
 
     def init_config(self, app):
         """Initialize configuration."""
-        app.config.setdefault(InvenioJSONSchemas.CONFIG_ENDPOINT,
-                              '/schemas')
-        app.config.setdefault('JSONSCHEMAS_HOST', 'localhost')
+        for k in dir(config):
+            if k.startswith('JSONSCHEMAS_'):
+                app.config.setdefault(k, getattr(config, k))
 
     def __getattr__(self, name):
         """Proxy to state object."""

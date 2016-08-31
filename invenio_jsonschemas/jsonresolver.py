@@ -32,7 +32,7 @@ from werkzeug.routing import Rule
 
 @jsonresolver.hookimpl
 def jsonresolver_loader(url_map):
-    """JSON resolver plugin.
+    """JSON resolver plugin that loads the schema endpoint.
 
     Injected into Invenio-Records JSON resolver.
     """

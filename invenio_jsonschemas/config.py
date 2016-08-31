@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,33 +22,10 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio module for building and serving JSONSchemas."""
+"""Default configuration."""
 
-from __future__ import absolute_import, print_function
+JSONSCHEMAS_HOST = 'localhost'
+"""Default json schema host."""
 
-from flask import Blueprint, abort, send_from_directory
-
-from .errors import JSONSchemaNotFound
-
-
-def create_blueprint(state):
-    """Create blueprint serving JSON schemas.
-
-    :param state: :class:`invenio_jsonschemas.ext.InvenioJSONSchemasState`
-       instance used to retrieve the schemas.
-    """
-    blueprint = Blueprint(
-        'invenio_jsonschemas',
-        __name__
-    )
-
-    @blueprint.route("/<path:schema_path>")
-    def get_schema(schema_path):
-        """Retrieve a schema."""
-        try:
-            return send_from_directory(state.get_schema_dir(schema_path),
-                                       schema_path)
-        except JSONSchemaNotFound:
-            abort(404)
-
-    return blueprint
+JSONSCHEMAS_ENDPOINT = '/schemas'
+"""Default schema endpoint."""
