@@ -35,7 +35,7 @@ def create_blueprint(state):
     """Create blueprint serving JSON schemas.
 
     :param state: :class:`invenio_jsonschemas.ext.InvenioJSONSchemasState`
-       instance used to retrieve the schemas.
+        instance used to retrieve the schemas.
     """
     blueprint = Blueprint(
         'invenio_jsonschemas',

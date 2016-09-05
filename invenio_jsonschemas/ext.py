@@ -173,8 +173,6 @@ class InvenioJSONSchemas(object):
     fields might not match the Flask application's host and port.
     """
 
-    CONFIG_ENDPOINT = 'JSONSCHEMAS_ENDPOINT'
-
     def __init__(self, app=None, **kwargs):
         """Extension initialization.
 
@@ -209,7 +207,7 @@ class InvenioJSONSchemas(object):
 
         app.register_blueprint(
             create_blueprint(state),
-            url_prefix=app.config[InvenioJSONSchemas.CONFIG_ENDPOINT]
+            url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
         )
 
         self._state = app.extensions['invenio-jsonschemas'] = state

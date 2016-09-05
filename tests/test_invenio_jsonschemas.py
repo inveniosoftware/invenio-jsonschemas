@@ -193,7 +193,7 @@ def test_view(app, pkg_factory, mock_entry_points):
 
     entry_point_group = 'invenio_jsonschema_test_entry_point'
     endpoint = '/testschemas'
-    app.config[InvenioJSONSchemas.CONFIG_ENDPOINT] = endpoint
+    app.config['JSONSCHEMAS_ENDPOINT'] = endpoint
     with pkg_factory(schema_files_1) as pkg1, \
             pkg_factory(schema_files_2) as pkg2, \
             pkg_factory(schema_files_3) as pkg3:

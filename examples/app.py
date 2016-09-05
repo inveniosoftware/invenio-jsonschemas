@@ -49,7 +49,7 @@ from invenio_jsonschemas import InvenioJSONSchemas
 app = Flask(__name__)
 
 # set the endpoint serving the JSON schemas
-app.config[InvenioJSONSchemas.CONFIG_ENDPOINT] = '/schemas'
+app.config['JSONSCHEMAS_ENDPOINT'] = '/schemas'
 
 # Initialize the application with the InvenioJSONSchema extension.
 # This registers the jsonschemas from examples/samplepkg/jsonschemas as
