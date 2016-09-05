@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -25,9 +25,6 @@
 from __future__ import print_function
 
 import os
-
-import sphinx.environment
-from docutils.utils import get_source_line
 
 # -- General configuration ------------------------------------------------
 
