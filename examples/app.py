@@ -29,12 +29,20 @@ Run example development server:
 
 .. code-block:: console
 
-    $ # install the sample application
-    $ cd examples/samplepkg
-    $ pip install -e .
-    $ # run the example application
-    $ cd ..
+    $ pip install -e .[all]
+    $ ./app-setup.sh
     $ python app.py
+
+Open the schema from web:
+
+.. code-block:: console
+
+    $ curl http://localhost:5000/schemas/record_schema.json
+    $ curl http://localhost:5000/schemas/biology/animal_record_schema.json
+
+Teardown the application:
+
+    $ ./app-teardown.sh
 """
 
 from __future__ import absolute_import, print_function

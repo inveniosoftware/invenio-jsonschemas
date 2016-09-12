@@ -37,7 +37,7 @@ recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
-recursive-include examples *.py
+recursive-include examples *.py *.sh
 recursive-include tests *.py
 recursive-include examples *.json
 recursive-include examples *.py
