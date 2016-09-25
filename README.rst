@@ -46,4 +46,4 @@ Invenio module for building and serving JSONSchemas.
 *This is an experimental developer preview release.*
 
 * Free software: GPLv2 license
-* Documentation: https://pythonhosted.org/invenio-jsonschemas/
+* Documentation: https://invenio-jsonschemas.readthedocs.io/
