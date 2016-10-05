@@ -39,6 +39,7 @@ from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
 from invenio_jsonschemas import InvenioJSONSchemas
+from invenio_jsonschemas.config import JSONSCHEMAS_URL_SCHEME
 from invenio_jsonschemas.errors import JSONSchemaDuplicate, JSONSchemaNotFound
 
 
@@ -111,6 +112,7 @@ def test_api(app, dir_factory):
 
 class mock_open(object):
     """Mock the builtin 'open' and count the file requests."""
+
     counter = 0
 
     def __init__(self, path):
@@ -274,10 +276,18 @@ def test_jsonresolver():
         assert exc_info.value.schema == {'type': 'integer'}
 
 
-def test_url_mapping(app, dir_factory):
+@pytest.mark.parametrize('url_scheme', [
+    None, 'http', 'https'
+])
+def test_url_mapping(app, dir_factory, url_scheme):
     """Test register schema."""
     app.config['SERVER_NAME'] = 'example.org'
     app.config['JSONSCHEMAS_HOST'] = 'inveniosoftware.org'
+    if url_scheme is not None:
+        app.config['JSONSCHEMAS_URL_SCHEME'] = url_scheme
+    else:
+        # test with default url scheme configuration
+        url_scheme = JSONSCHEMAS_URL_SCHEME
 
     ext = InvenioJSONSchemas(app, entry_point_group=None)
     schema_files = build_schemas(1)
@@ -286,13 +296,17 @@ def test_url_mapping(app, dir_factory):
         ext.register_schemas_dir(directory)
         with app.app_context():
             assert 'sub1/subschema_1.json' == ext.url_to_path(
-                'http://inveniosoftware.org/schemas/sub1/subschema_1.json')
+                '{0}://inveniosoftware.org/schemas/sub1/subschema_1.json'
+                .format(url_scheme))
             assert ext.url_to_path(
-                'http://inveniosoftware.org/schemas/invalid.json') is None
+                '{0}://inveniosoftware.org/schemas/invalid.json'
+                .format(url_scheme)) is None
             assert ext.url_to_path(
-                'http://example.org/schemas/sub1/subschema_1.json') is None
+                '{0}://example.org/schemas/sub1/subschema_1.json'
+                .format(url_scheme)) is None
 
             assert (
-                'http://inveniosoftware.org/schemas/sub1/subschema_1.json'
+                '{0}://inveniosoftware.org/schemas/sub1/subschema_1.json'
+                .format(url_scheme)
             ) == ext.path_to_url('sub1/subschema_1.json')
             assert ext.path_to_url('invalid.json') is None

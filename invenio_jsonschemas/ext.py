@@ -159,7 +159,10 @@ class InvenioJSONSchemasState(object):
         """
         if path not in self.schemas:
             return None
-        return self.url_map.bind(self.app.config['JSONSCHEMAS_HOST']).build(
+        return self.url_map.bind(
+            self.app.config['JSONSCHEMAS_HOST'],
+            url_scheme=self.app.config['JSONSCHEMAS_URL_SCHEME']
+        ).build(
             'schema', values={'path': path}, force_external=True)
 
 

@@ -29,3 +29,6 @@ JSONSCHEMAS_HOST = 'localhost'
 
 JSONSCHEMAS_ENDPOINT = '/schemas'
 """Default schema endpoint."""
+
+JSONSCHEMAS_URL_SCHEME = 'http'
+"""Default url scheme for schemas."""
