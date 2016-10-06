@@ -131,7 +131,7 @@ class InvenioJSONSchemasState(object):
     def list_schemas(self):
         """List all JSON-schema names.
 
-        :Return: list of schema names.
+        :returns: list of schema names.
         :rtype: list
         """
         return self.schemas.keys()
@@ -172,8 +172,10 @@ class InvenioJSONSchemas(object):
     Register blueprint serving registered schemas and can be used as an api
     to register those schemas.
 
-    Note: JSON schemas are served as static files. Thus their "id" and "$ref"
-    fields might not match the Flask application's host and port.
+    .. note::
+
+        JSON schemas are served as static files. Thus their "id" and "$ref"
+        fields might not match the Flask application's host and port.
     """
 
     def __init__(self, app=None, **kwargs):
