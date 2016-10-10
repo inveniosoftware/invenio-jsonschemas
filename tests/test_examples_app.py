@@ -59,6 +59,8 @@ def example_app():
     subprocess.call(cmd, shell=True)
     # return to the original directory
     os.chdir(current_dir)
+    cmd = 'pip install -e .[all]'
+    subprocess.call(cmd, shell=True)
 
 
 def test_example_app(example_app):
