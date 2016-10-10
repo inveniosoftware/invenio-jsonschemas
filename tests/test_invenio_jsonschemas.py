@@ -219,6 +219,42 @@ def test_view(app, pkg_factory, mock_entry_points):
             assert res.status_code == 404
 
 
+def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
+    """Test replace refs config in view."""
+    schemas = {
+        'root.json': '{"$ref": "sub/schema.json"}',
+        'sub/schema.json': schema_template.format('test')
+    }
+
+    entry_point_group = 'invenio_jsonschema_test_entry_point'
+    endpoint = '/testschemas'
+    app.config['JSONSCHEMAS_ENDPOINT'] = endpoint
+    with pkg_factory(schemas) as pkg1:
+        mock_entry_points.add(entry_point_group, 'entry1', pkg1)
+        ext = InvenioJSONSchemas(entry_point_group=entry_point_group)
+        ext = ext.init_app(app)
+
+        with app.test_client() as client:
+            res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['root.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+            app.config['JSONSCHEMAS_REPLACE_REFS'] = True
+
+            res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['sub/schema.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+            app.config['JSONSCHEMAS_REPLACE_REFS'] = False
+
+            res = client.get('{0}/{1}?refs=1'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['sub/schema.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+
 def test_alternative_entry_point_group_init(app, pkg_factory,
                                             mock_entry_points):
     """Test initializing the entry_point_group after creating the extension."""

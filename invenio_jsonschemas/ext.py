@@ -30,10 +30,11 @@ import json
 import os
 
 import pkg_resources
-
+import six
 from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
+from werkzeug.utils import cached_property, import_string
 
 from . import config
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
@@ -70,9 +71,9 @@ class InvenioJSONSchemasState(object):
             dir_path = os.path.relpath(root, directory)
             if dir_path == '.':
                 dir_path = ''
-            for file in files:
-                if file.lower().endswith((".json")):
-                    schema_name = os.path.join(dir_path, file)
+            for file_ in files:
+                if file_.lower().endswith(('.json')):
+                    schema_name = os.path.join(dir_path, file_)
                     if schema_name in self.schemas:
                         raise JSONSchemaDuplicate(
                             schema_name,
@@ -164,6 +165,14 @@ class InvenioJSONSchemasState(object):
             url_scheme=self.app.config['JSONSCHEMAS_URL_SCHEME']
         ).build(
             'schema', values={'path': path}, force_external=True)
+
+    @cached_property
+    def loader_cls(self):
+        """Loader class used in `JsonRef.replace_refs`."""
+        cls = self.app.config['JSONSCHEMAS_LOADER_CLS']
+        if isinstance(cls, six.string_types):
+            return import_string(cls)
+        return cls
 
 
 class InvenioJSONSchemas(object):

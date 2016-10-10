@@ -32,3 +32,9 @@ JSONSCHEMAS_ENDPOINT = '/schemas'
 
 JSONSCHEMAS_URL_SCHEME = 'https'
 """Default url scheme for schemas."""
+
+JSONSCHEMAS_REPLACE_REFS = False
+"""Whether to resolve $ref before serving a schema."""
+
+JSONSCHEMAS_LOADER_CLS = None
+"""Loader class used in ``JSONRef`` when replacing ``$ref``."""

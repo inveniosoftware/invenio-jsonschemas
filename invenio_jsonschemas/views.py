@@ -26,7 +26,12 @@
 
 from __future__ import absolute_import, print_function
 
-from flask import Blueprint, abort, send_from_directory
+import json
+import os
+
+from flask import Blueprint, abort, current_app, jsonify, request, \
+    send_from_directory
+from jsonref import JsonRef
 
 from .errors import JSONSchemaNotFound
 
@@ -42,13 +47,23 @@ def create_blueprint(state):
         __name__
     )
 
-    @blueprint.route("/<path:schema_path>")
+    @blueprint.route('/<path:schema_path>')
     def get_schema(schema_path):
         """Retrieve a schema."""
         try:
-            return send_from_directory(state.get_schema_dir(schema_path),
-                                       schema_path)
+            schema_dir = state.get_schema_dir(schema_path)
         except JSONSchemaNotFound:
             abort(404)
+        if request.args.get('refs',
+                            current_app.config.get('JSONSCHEMAS_REPLACE_REFS'),
+                            type=int):
+            with open(os.path.join(schema_dir, schema_path), 'r') as file_:
+                schema = json.load(file_)
+            return jsonify(JsonRef.replace_refs(
+                schema, base_uri=request.base_url,
+                loader=state.loader_cls() if state.loader_cls else None,
+            ))
+        else:
+            return send_from_directory(schema_dir, schema_path)
 
     return blueprint
