@@ -36,3 +36,4 @@ Invenio module for building and serving JSONSchemas.
 - Nicolas Harraudeau <nicolas.harraudeau@cern.ch>
 - Sami Hiltunen <sami.mikael.hiltunen@cern.ch>
 - Tibor Simko <tibor.simko@cern.ch>
+- Robin Schroer <sulami@peerwire.org>
