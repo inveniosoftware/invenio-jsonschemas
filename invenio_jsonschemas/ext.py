@@ -235,7 +235,7 @@ class InvenioJSONSchemas(object):
 
         host_setting = app.config['JSONSCHEMAS_HOST']
         if not host_setting or host_setting == 'localhost':
-            print('WARNING: JSONSCHEMAS_HOST is set to {}'.format(
+            app.logger.warning('JSONSCHEMAS_HOST is set to {0}'.format(
                 host_setting))
 
     def __getattr__(self, name):
