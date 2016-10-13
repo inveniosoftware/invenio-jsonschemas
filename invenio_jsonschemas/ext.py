@@ -233,6 +233,11 @@ class InvenioJSONSchemas(object):
             if k.startswith('JSONSCHEMAS_'):
                 app.config.setdefault(k, getattr(config, k))
 
+        host_setting = app.config['JSONSCHEMAS_HOST']
+        if not host_setting or host_setting == 'localhost':
+            print('WARNING: JSONSCHEMAS_HOST is set to {}'.format(
+                host_setting))
+
     def __getattr__(self, name):
         """Proxy to state object."""
         return getattr(self._state, name, None)
