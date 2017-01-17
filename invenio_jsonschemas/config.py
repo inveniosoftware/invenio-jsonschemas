@@ -36,5 +36,8 @@ JSONSCHEMAS_URL_SCHEME = 'https'
 JSONSCHEMAS_REPLACE_REFS = False
 """Whether to resolve $ref before serving a schema."""
 
+JSONSCHEMAS_REPLACE_ALLOF = False
+"""Whether to resolve allOf before serving a schema."""
+
 JSONSCHEMAS_LOADER_CLS = None
 """Loader class used in ``JSONRef`` when replacing ``$ref``."""

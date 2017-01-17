@@ -35,6 +35,8 @@ from jsonref import JsonRef
 
 from .errors import JSONSchemaNotFound
 
+from copy import deepcopy
+
 
 def create_blueprint(state):
     """Create blueprint serving JSON schemas.
@@ -59,11 +61,36 @@ def create_blueprint(state):
                             type=int):
             with open(os.path.join(schema_dir, schema_path), 'r') as file_:
                 schema = json.load(file_)
-            return jsonify(JsonRef.replace_refs(
+
+            new_schema = JsonRef.replace_refs(
                 schema, base_uri=request.base_url,
                 loader=state.loader_cls() if state.loader_cls else None,
-            ))
+            )
+
+            if request.args.get('allOf',
+                                current_app.config.get('JSONSCHEMAS_REPLACE_ALLOF'),
+                                type=int):
+                if 'allOf' in new_schema:
+                    for x in new_schema['allOf']:
+                        sub_schema = x
+                        sub_schema.pop('title', None)
+                        new_schema = merge_dicts(new_schema, sub_schema)
+                    new_schema.pop('allOf')
+
+            return jsonify(new_schema)  
         else:
             return send_from_directory(schema_dir, schema_path)
 
     return blueprint
+
+
+def merge_dicts(first, second):
+    """Merge the 'second' multiple-dictionary into the 'first' one."""
+    new = deepcopy(first)
+    for k, v in second.items():
+        if isinstance(v, dict) and v:
+            ret = merge_dicts(new.get(k, dict()), v)
+            new[k] = ret
+        else:
+            new[k] = second[k]
+    return new
