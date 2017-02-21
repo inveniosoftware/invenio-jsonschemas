@@ -31,9 +31,13 @@ include *.json
 include *.rst
 include *.sh
 include *.txt
+include .dockerignore
+include .editorconfig
+include .lgtm MAINTAINERS
 include docs/requirements.txt
 include LICENSE
 include pytest.ini
+prune docs/_build
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
