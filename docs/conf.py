@@ -27,6 +27,10 @@
 from __future__ import print_function
 
 import os
+import sys
+
+# Plug example application into module path
+sys.path.append('examples')
 
 # -- General configuration ------------------------------------------------
 
