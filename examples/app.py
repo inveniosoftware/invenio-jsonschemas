@@ -42,6 +42,8 @@ Open the schema from web:
 
 Teardown the application:
 
+.. code-block:: console
+
     $ ./app-teardown.sh
 """
 
