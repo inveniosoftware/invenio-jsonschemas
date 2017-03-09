@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,23 +21,14 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""JSON resolver for JSON schemas."""
+"""Helper proxy to the state object."""
 
 from __future__ import absolute_import, print_function
 
-import jsonresolver
-from werkzeug.routing import Rule
-from . import current_jsonschemas
+from flask import current_app
+from werkzeug.local import LocalProxy
 
-
-@jsonresolver.hookimpl
-def jsonresolver_loader(url_map):
-    """JSON resolver plugin that loads the schema endpoint.
-
-    Injected into Invenio-Records JSON resolver.
-    """
-    from flask import current_app
-    url_map.add(Rule(
-        "{0}/<path:path>".format(current_app.config['JSONSCHEMAS_ENDPOINT']),
-        endpoint=current_jsonschemas.get_schema,
-        host=current_app.config['JSONSCHEMAS_HOST']))
+current_jsonschemas = LocalProxy(
+    lambda: current_app.extensions['invenio-jsonschemas']
+)
+"""Helper proxy to access state object."""

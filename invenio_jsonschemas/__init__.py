@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function
 
 from .ext import InvenioJSONSchemas
+from .proxies import current_jsonschemas
 from .version import __version__
 
-__all__ = ('__version__', 'InvenioJSONSchemas')
+__all__ = ('__version__', 'InvenioJSONSchemas', 'current_jsonschemas')
