@@ -28,7 +28,6 @@ from __future__ import absolute_import, print_function
 
 import jsonresolver
 from werkzeug.routing import Rule
-from . import current_jsonschemas
 
 
 @jsonresolver.hookimpl
@@ -38,6 +37,7 @@ def jsonresolver_loader(url_map):
     Injected into Invenio-Records JSON resolver.
     """
     from flask import current_app
+    from . import current_jsonschemas
     url_map.add(Rule(
         "{0}/<path:path>".format(current_app.config['JSONSCHEMAS_ENDPOINT']),
         endpoint=current_jsonschemas.get_schema,
