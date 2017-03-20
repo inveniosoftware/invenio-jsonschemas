@@ -38,3 +38,6 @@ JSONSCHEMAS_REPLACE_REFS = False
 
 JSONSCHEMAS_LOADER_CLS = None
 """Loader class used in ``JSONRef`` when replacing ``$ref``."""
+
+JSONSCHEMAS_TRANSFORM = []
+"""List of JSONSchema transformations. ex: ['refs', 'allOf']"""

@@ -31,6 +31,7 @@ import os
 
 import pkg_resources
 import six
+
 from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
@@ -38,6 +39,7 @@ from werkzeug.utils import cached_property, import_string
 
 from . import config
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
+from .transform import JSONSCHEMAS_TRANSFORMATIONS
 from .views import create_blueprint
 
 try:
@@ -127,7 +129,14 @@ class InvenioJSONSchemasState(object):
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
         with open(os.path.join(self.schemas[path], path)) as file_:
-            return json.load(file_)
+            schema = json.load(file_)
+
+            for transform in self.app.config['JSONSCHEMAS_TRANSFORM']:
+                if transform in JSONSCHEMAS_TRANSFORMATIONS:
+                    _t = JSONSCHEMAS_TRANSFORMATIONS[transform]
+                    schema = _t(self, schema)
+
+            return schema
 
     def list_schemas(self):
         """List all JSON-schema names.
