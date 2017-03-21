@@ -26,11 +26,7 @@
 
 from __future__ import absolute_import, print_function
 
-import json
-import os
-
-from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
-from jsonref import JsonRef
+from flask import Blueprint, abort, jsonify
 
 from .errors import JSONSchemaNotFound
 

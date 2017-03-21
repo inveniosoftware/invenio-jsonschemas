@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -39,7 +39,7 @@ from werkzeug.utils import cached_property, import_string
 
 from . import config
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
-from .transform import JSONSCHEMAS_TRANSFORMATIONS
+from .utils import obj_or_import_string
 from .views import create_blueprint
 
 try:
@@ -131,10 +131,11 @@ class InvenioJSONSchemasState(object):
         with open(os.path.join(self.schemas[path], path)) as file_:
             schema = json.load(file_)
 
-            for transform in self.app.config['JSONSCHEMAS_TRANSFORM']:
-                if transform in JSONSCHEMAS_TRANSFORMATIONS:
-                    _t = JSONSCHEMAS_TRANSFORMATIONS[transform]
-                    schema = _t(self, schema)
+            for _t in self.app.config['JSONSCHEMAS_TRANSFORM']:
+                if _t in self.app.config['JSONSCHEMAS_TRANSFORMATIONS']:
+                    _transform = obj_or_import_string(
+                        self.app.config['JSONSCHEMAS_TRANSFORMATIONS'][_t])
+                    schema = _transform(self, schema)
 
             return schema
 

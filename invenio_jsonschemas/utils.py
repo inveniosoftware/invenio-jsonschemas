@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016, 2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,25 +22,21 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Default configuration."""
+"""Implementention of various utility functions."""
 
-JSONSCHEMAS_HOST = 'localhost'
-"""Default json schema host."""
+import six
 
-JSONSCHEMAS_ENDPOINT = '/schemas'
-"""Default schema endpoint."""
+from werkzeug.utils import import_string
 
-JSONSCHEMAS_URL_SCHEME = 'https'
-"""Default url scheme for schemas."""
 
-JSONSCHEMAS_LOADER_CLS = None
-"""Loader class used in ``JSONRef`` when replacing ``$ref``."""
-
-JSONSCHEMAS_TRANSFORM = []
-"""List of JSONSchema transformations to be used. ex: ['refs', 'allOf']"""
-
-JSONSCHEMAS_TRANSFORMATIONS = {
-    'allOf': 'invenio_jsonschemas.transform:transform_all_of',
-    'refs': 'invenio_jsonschemas.transform:transform_refs'
-}
-"""List of available JSONSchema transformations"""
+def obj_or_import_string(value, default=None):
+    """Import string or return object.
+    :params value: Import path or class object to instantiate.
+    :params default: Default object to return if the import fails.
+    :returns: The imported object.
+    """
+    if isinstance(value, six.string_types):
+        return import_string(value)
+    elif value:
+        return value
+    return default
