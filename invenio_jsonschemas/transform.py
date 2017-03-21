@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,31 +22,39 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-""" JSONSchema transformation methods."""
+"""JSONSchema transformation methods."""
 
-
+from copy import deepcopy
 from flask import request
 from jsonref import JsonRef
 
 from .errors import JSONSchemaNotFound
 
-from copy import deepcopy
-
 
 def transform_all_of(state, schema):
-    """Transforms schema allOf """
-    if 'allOf' in schema:
-        for x in schema['allOf']:
-            sub_schema = x
-            sub_schema.pop('title', None)
-            schema = merge_dicts(schema, sub_schema)
-        schema.pop('allOf')
+    """Transform schema allOf."""
+    def traverse(schema):
+        if isinstance(schema, dict):
+            if 'allOf' in schema:
+                for x in schema['allOf']:
+                    sub_schema = x
+                    sub_schema.pop('title', None)
+                    schema = merge_dicts(schema, sub_schema)
+                schema.pop('allOf')
+                schema = traverse(schema)
+            elif 'properties' in schema:
+                for x in schema.get('properties', []):
+                    schema['properties'][x] = traverse(
+                        schema['properties'][x])
+            elif 'items' in schema:
+                schema['items'] = traverse(schema['items'])
+        return schema
 
-    return schema
+    return traverse(schema)
 
 
 def transform_refs(state, schema):
-    """Transforms schema refs"""
+    """Transform schema refs."""
     try:
         _schema = JsonRef.replace_refs(
             schema, base_uri=request.base_url,
@@ -68,9 +76,3 @@ def merge_dicts(first, second):
         else:
             new[k] = second[k]
     return new
-
-
-JSONSCHEMAS_TRANSFORMATIONS = {
-    "allOf": transform_all_of,
-    "refs": transform_refs
-}
