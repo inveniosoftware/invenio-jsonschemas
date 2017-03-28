@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -27,8 +27,9 @@
 from __future__ import absolute_import, print_function
 
 from flask import Blueprint, abort, jsonify
+from flask.views import MethodView
 
-from .errors import JSONSchemaNotFound
+from ..errors import JSONSchemaNotFound
 
 
 def create_blueprint(state):
@@ -38,17 +39,36 @@ def create_blueprint(state):
         instance used to retrieve the schemas.
     """
     blueprint = Blueprint(
-        'invenio_jsonschemas',
+        'invenio_jsonschemas_rest',
         __name__
     )
 
-    @blueprint.route('/<path:schema_path>')
-    def get_schema(schema_path):
-        """Retrieve a schema."""
+    for endpoint, e_item in \
+            state.app.config['JSONSCHEMAS_REST_ENDPOINTS'].iteritems():
+
+        blueprint.add_url_rule(
+            '/{0}/<path:schema_path>'.format(endpoint),
+            view_func=SchemaView.as_view(
+                'schema_transform_{0}'.format(endpoint),
+                state=state,
+                tranform=endpoint
+            )
+        )
+
+    return blueprint
+
+
+class SchemaView(MethodView):
+
+    def __init__(self, state=None, tranform=None):
+
+        self.state = state
+        self.tranform = tranform
+
+    def get(self, schema_path=None):
         try:
-            schema = state.get_schema(schema_path)
+            schema = self.state.get_schema_transformed(
+                schema_path, self.tranform)
             return jsonify(schema)
         except JSONSchemaNotFound:
             abort(404)
-
-    return blueprint

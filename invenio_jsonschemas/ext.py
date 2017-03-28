@@ -40,7 +40,7 @@ from werkzeug.utils import cached_property, import_string
 from . import config
 from .errors import JSONSchemaDuplicate, JSONSchemaNotFound
 from .utils import obj_or_import_string
-from .views import create_blueprint
+from .views import rest, ui
 
 try:
     from functools import lru_cache
@@ -139,6 +139,28 @@ class InvenioJSONSchemasState(object):
 
             return schema
 
+    @lru_cache(maxsize=1000)
+    def get_schema_transformed(self, path, transform):
+        """Retrieve a schema.
+
+        :param path: schema's relative path.
+        :raises invenio_jsonschemas.errors.JSONSchemaNotFound: If no schema
+            was found in the specified path.
+        :returns: The schema in a dictionary form.
+        """
+        if path not in self.schemas:
+            raise JSONSchemaNotFound(path)
+        with open(os.path.join(self.schemas[path], path)) as file_:
+            schema = json.load(file_)
+
+            for _t in self.app.config['JSONSCHEMAS_REST_ENDPOINTS'][transform]:
+                if _t in self.app.config['JSONSCHEMAS_TRANSFORMATIONS']:
+                    _transform = obj_or_import_string(
+                        self.app.config['JSONSCHEMAS_TRANSFORMATIONS'][_t])
+                    schema = _transform(self, schema)
+
+            return schema
+
     def list_schemas(self):
         """List all JSON-schema names.
 
@@ -230,7 +252,75 @@ class InvenioJSONSchemas(object):
                 state.register_schemas_dir(directory)
 
         app.register_blueprint(
-            create_blueprint(state),
+            ui.create_blueprint(state),
+            url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
+        )
+
+        self._state = app.extensions['invenio-jsonschemas'] = state
+        return state
+
+    def init_config(self, app):
+        """Initialize configuration."""
+        for k in dir(config):
+            if k.startswith('JSONSCHEMAS_'):
+                app.config.setdefault(k, getattr(config, k))
+
+        host_setting = app.config['JSONSCHEMAS_HOST']
+        if not host_setting or host_setting == 'localhost':
+            app.logger.warning('JSONSCHEMAS_HOST is set to {0}'.format(
+                host_setting))
+
+    def __getattr__(self, name):
+        """Proxy to state object."""
+        return getattr(self._state, name, None)
+
+
+class InvenioJSONSchemasREST(object):
+    """Invenio-JSONSchemas REST extension.
+
+    Register blueprint serving registered schemas and can be used as an api
+    to register those schemas.
+
+    .. note::
+
+        JSON schemas are served as static files. Thus their "id" and "$ref"
+        fields might not match the Flask application's host and port.
+    """
+
+    def __init__(self, app=None, **kwargs):
+        """Extension initialization.
+
+        :param app: The Flask application. (Default: ``None``)
+        """
+        self.kwargs = kwargs
+        if app:
+            self.init_app(app, **kwargs)
+
+    def init_app(self, app, entry_point_group=None):
+        """Flask application initialization.
+
+        :param app: The Flask application.
+        :param entry_point_group: The group entry point to load extensions.
+            (Default: ``invenio_jsonschemas.schemas``)
+        """
+        self.init_config(app)
+
+        if not entry_point_group:
+            entry_point_group = self.kwargs['entry_point_group'] \
+                if 'entry_point_group' in self.kwargs \
+                else 'invenio_jsonschemas.schemas'
+
+        state = InvenioJSONSchemasState(app)
+
+        # Load the json-schemas from extension points.
+        if entry_point_group:
+            for base_entry in pkg_resources.iter_entry_points(
+                    entry_point_group):
+                directory = os.path.dirname(base_entry.load().__file__)
+                state.register_schemas_dir(directory)
+
+        app.register_blueprint(
+            rest.create_blueprint(state),
             url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
         )
 
