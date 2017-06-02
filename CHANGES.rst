@@ -1,6 +1,6 @@
 ..
     This file is part of Invenio.
-    Copyright (C) 2015, 2016 CERN.
+    Copyright (C) 2015, 2016, 2017 CERN.
 
     Invenio is free software; you can redistribute it
     and/or modify it under the terms of the GNU General Public License as
@@ -25,17 +25,7 @@
 Changes
 =======
 
-Version 1.0.0a3 (release 2016-04-22)
-------------------------------------
-
-Improved features
-~~~~~~~~~~~~~~~~~
-
-- Cache for schemas loading.
-
-- Local schemas resolving using JSONResolver.
-
-Version 1.0.0a1 (release 2015-12-04)
+Version 1.0.0a4 (release 2017-06-02)
 ------------------------------------
 
 - Initial public release.
