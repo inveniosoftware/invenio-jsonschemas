@@ -35,8 +35,8 @@ tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
     'isort>=4.2.2',
-    'jsonresolver[jsonschema]>=0.2.0',
-    'pydocstyle>=1.0.0',
+    'jsonresolver[jsonschema]>=0.2.1',
+    'pydocstyle>=2.0.0',
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
@@ -46,7 +46,7 @@ tests_require = [
 
 extras_require = {
     'docs': [
-        'Sphinx>=1.4.2',
+        'Sphinx>=1.6.2',
     ],
     'tests': tests_require,
 }
@@ -60,7 +60,7 @@ setup_requires = [
 ]
 
 install_requires = [
-    'Flask>=0.11.1',
+    'Flask>=0.12.2',
     'jsonref>=0.1',
 ]
 

@@ -336,3 +336,6 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 # Autodoc configuraton.
 autoclass_content = 'both'
+
+# remove exceptions related to built-in python types (see https://bugs.python.org/issue11975)
+nitpick_ignore = [('py:obj', 'list')]

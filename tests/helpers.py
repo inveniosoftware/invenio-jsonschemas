@@ -27,7 +27,6 @@
 from jsonresolver import JSONResolver
 from jsonresolver.contrib.jsonref import json_loader_factory
 
-
 LOADER_CLS = json_loader_factory(JSONResolver(
     plugins=['invenio_jsonschemas.jsonresolver']
 ))
