@@ -25,6 +25,8 @@
 
 """Minimal Flask application example for development.
 
+SPHINX-START
+
 Run example development server:
 
 .. code-block:: console
@@ -45,6 +47,8 @@ Teardown the application:
 .. code-block:: console
 
     $ ./app-teardown.sh
+
+SPHINX-END
 """
 
 from __future__ import absolute_import, print_function
