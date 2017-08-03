@@ -1,8 +1,8 @@
 ==============================
- Invenio-JSONSchemas v1.0.0a4
+ Invenio-JSONSchemas v1.0.0a5
 ==============================
 
-Invenio-JSONSchemas v1.0.0a4 was released on June 2, 2017.
+Invenio-JSONSchemas v1.0.0a5 was released on August 3, 2017.
 
 About
 -----
@@ -19,7 +19,7 @@ What's new
 Installation
 ------------
 
-   $ pip install invenio-jsonschemas==1.0.0a4
+   $ pip install invenio-jsonschemas==1.0.0a5
 
 Documentation
 -------------
