@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,7 +22,17 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio module for building and serving JSONSchemas."""
+"""Invenio module for building and serving JSONSchemas.
+
+Note on storing absolute URLs
+-----------------------------
+As discussed in this issue_, it is not recommended to store and expose
+absolute URLs in the `$ref`, as they can change in the future. One should
+instead try to use DOI/EPIC or other kind of identifiers with the certitude
+that they will never change, to avoid broken references.
+
+.. _issue: https://github.com/inveniosoftware/invenio-jsonschemas/issues/23
+"""
 
 from __future__ import absolute_import, print_function
 
