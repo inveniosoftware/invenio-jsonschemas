@@ -22,38 +22,6 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Default configuration."""
+"""Invenio module for building and serving JSONSchemas."""
 
-JSONSCHEMAS_HOST = 'localhost'
-"""Default json schema host."""
-
-JSONSCHEMAS_ENDPOINT = '/schemas'
-"""Default schema endpoint."""
-
-JSONSCHEMAS_URL_SCHEME = 'https'
-"""Default url scheme for schemas."""
-
-JSONSCHEMAS_LOADER_CLS = None
-"""Loader class used in ``JSONRef`` when replacing ``$ref``."""
-
-JSONSCHEMAS_TRANSFORM = []
-"""List of JSONSchema transformations to be used. ex: ['refs', 'allOf']"""
-
-JSONSCHEMAS_TRANSFORMATIONS = {
-    'allOf': 'invenio_jsonschemas.transform:transform_all_of',
-    'refs': 'invenio_jsonschemas.transform:transform_refs'
-}
-"""List of available JSONSchema transformations"""
-
-JSONSCHEMAS_REST_ENDPOINTS = dict()
-"""JSONSchemas REST endpoint configuration.
-
-  example configuration:
-
-    JSONSCHEMAS_REST_ENDPOINTS = {
-        "refs": ['refs'],
-        "allOf": ['allOf'],
-        "resolved": ['refs', 'allOf']
-    }
-
-"""
+from __future__ import absolute_import

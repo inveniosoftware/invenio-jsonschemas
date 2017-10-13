@@ -31,9 +31,11 @@ import os
 import shutil
 import sys
 import tempfile
+
 from contextlib import contextmanager
 
 import pytest
+
 from flask import Flask
 from mock import patch
 from pkg_resources import EntryPoint
@@ -46,6 +48,7 @@ def app():
     app.config.update(
         JSONSCHEMAS_LOADER_CLS='helpers:LOADER_CLS',
         TESTING=True,
+        JSONSCHEMAS_TRANSFORM=[]
     )
     return app
 
@@ -125,6 +128,7 @@ def mock_entry_points():
 
     class EntryPointBuilder(object):
         """Manipulate mock Entrypoints."""
+
         def add(self, group, name, module_name):
             """Register additional entrypoints."""
             group_entry_points = entry_points.setdefault(group, [])

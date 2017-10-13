@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -26,14 +26,10 @@
 
 from __future__ import absolute_import, print_function
 
-import json
-import os
+from flask import Blueprint, abort, jsonify
+from flask.views import MethodView
 
-from flask import Blueprint, abort, current_app, jsonify, request, \
-    send_from_directory
-from jsonref import JsonRef
-
-from .errors import JSONSchemaNotFound
+from ..errors import JSONSchemaNotFound
 
 
 def create_blueprint(state):
@@ -43,27 +39,36 @@ def create_blueprint(state):
         instance used to retrieve the schemas.
     """
     blueprint = Blueprint(
-        'invenio_jsonschemas',
+        'invenio_jsonschemas_rest',
         __name__
     )
 
-    @blueprint.route('/<path:schema_path>')
-    def get_schema(schema_path):
-        """Retrieve a schema."""
-        try:
-            schema_dir = state.get_schema_dir(schema_path)
-        except JSONSchemaNotFound:
-            abort(404)
-        if request.args.get('refs',
-                            current_app.config.get('JSONSCHEMAS_REPLACE_REFS'),
-                            type=int):
-            with open(os.path.join(schema_dir, schema_path), 'r') as file_:
-                schema = json.load(file_)
-            return jsonify(JsonRef.replace_refs(
-                schema, base_uri=request.base_url,
-                loader=state.loader_cls() if state.loader_cls else None,
-            ))
-        else:
-            return send_from_directory(schema_dir, schema_path)
+    for endpoint, e_item in \
+            state.app.config['JSONSCHEMAS_REST_ENDPOINTS'].iteritems():
+
+        blueprint.add_url_rule(
+            '/{0}/<path:schema_path>'.format(endpoint),
+            view_func=SchemaView.as_view(
+                'schema_transform_{0}'.format(endpoint),
+                state=state,
+                tranform=endpoint
+            )
+        )
 
     return blueprint
+
+
+class SchemaView(MethodView):
+
+    def __init__(self, state=None, tranform=None):
+
+        self.state = state
+        self.tranform = tranform
+
+    def get(self, schema_path=None):
+        try:
+            schema = self.state.get_schema_transformed(
+                schema_path, self.tranform)
+            return jsonify(schema)
+        except JSONSchemaNotFound:
+            abort(404)

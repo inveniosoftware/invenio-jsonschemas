@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016, 2017 CERN.
+# Copyright (C) 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,38 +22,33 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Default configuration."""
+"""Invenio module for building and serving JSONSchemas."""
 
-JSONSCHEMAS_HOST = 'localhost'
-"""Default json schema host."""
+from __future__ import absolute_import, print_function
 
-JSONSCHEMAS_ENDPOINT = '/schemas'
-"""Default schema endpoint."""
+from flask import Blueprint, abort, jsonify
 
-JSONSCHEMAS_URL_SCHEME = 'https'
-"""Default url scheme for schemas."""
+from ..errors import JSONSchemaNotFound
 
-JSONSCHEMAS_LOADER_CLS = None
-"""Loader class used in ``JSONRef`` when replacing ``$ref``."""
 
-JSONSCHEMAS_TRANSFORM = []
-"""List of JSONSchema transformations to be used. ex: ['refs', 'allOf']"""
+def create_blueprint(state):
+    """Create blueprint serving JSON schemas.
 
-JSONSCHEMAS_TRANSFORMATIONS = {
-    'allOf': 'invenio_jsonschemas.transform:transform_all_of',
-    'refs': 'invenio_jsonschemas.transform:transform_refs'
-}
-"""List of available JSONSchema transformations"""
+    :param state: :class:`invenio_jsonschemas.ext.InvenioJSONSchemasState`
+        instance used to retrieve the schemas.
+    """
+    blueprint = Blueprint(
+        'invenio_jsonschemas',
+        __name__
+    )
 
-JSONSCHEMAS_REST_ENDPOINTS = dict()
-"""JSONSchemas REST endpoint configuration.
+    @blueprint.route('/<path:schema_path>')
+    def get_schema(schema_path):
+        """Retrieve a schema."""
+        try:
+            schema = state.get_schema(schema_path)
+            return jsonify(schema)
+        except JSONSchemaNotFound:
+            abort(404)
 
-  example configuration:
-
-    JSONSCHEMAS_REST_ENDPOINTS = {
-        "refs": ['refs'],
-        "allOf": ['allOf'],
-        "resolved": ['refs', 'allOf']
-    }
-
-"""
+    return blueprint
