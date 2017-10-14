@@ -32,6 +32,7 @@ import os
 
 import mock
 import pytest
+
 from flask import Flask
 from jsonresolver import JSONResolver
 from jsonresolver.contrib.jsonschema import ref_resolver_factory
@@ -219,7 +220,7 @@ def test_view(app, pkg_factory, mock_entry_points):
             assert res.status_code == 404
 
 
-def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
+def test_replace_refs_in_view1(app, pkg_factory, mock_entry_points):
     """Test replace refs config in view."""
     schemas = {
         'root.json': '{"$ref": "sub/schema.json"}',
@@ -228,6 +229,8 @@ def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
 
     entry_point_group = 'invenio_jsonschema_test_entry_point'
     endpoint = '/testschemas'
+
+    app.config['JSONSCHEMAS_TRANSFORM'] = []
     app.config['JSONSCHEMAS_ENDPOINT'] = endpoint
     with pkg_factory(schemas) as pkg1:
         mock_entry_points.add(entry_point_group, 'entry1', pkg1)
@@ -240,16 +243,26 @@ def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
             assert json.loads(schemas['root.json']) == \
                 json.loads(res.get_data(as_text=True))
 
-            app.config['JSONSCHEMAS_REPLACE_REFS'] = True
 
+def test_replace_refs_in_view2(app, pkg_factory, mock_entry_points):
+    """Test replace refs config in view."""
+    schemas = {
+        'root.json': '{"$ref": "sub/schema.json"}',
+        'sub/schema.json': schema_template.format('test')
+    }
+
+    entry_point_group = 'invenio_jsonschema_test_entry_point'
+    endpoint = '/testschemas'
+
+    app.config['JSONSCHEMAS_TRANSFORM'] = ['refs']
+    app.config['JSONSCHEMAS_ENDPOINT'] = endpoint
+    with pkg_factory(schemas) as pkg1:
+        mock_entry_points.add(entry_point_group, 'entry1', pkg1)
+        ext = InvenioJSONSchemas(entry_point_group=entry_point_group)
+        ext = ext.init_app(app)
+
+        with app.test_client() as client:
             res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
-            assert res.status_code == 200
-            assert json.loads(schemas['sub/schema.json']) == \
-                json.loads(res.get_data(as_text=True))
-
-            app.config['JSONSCHEMAS_REPLACE_REFS'] = False
-
-            res = client.get('{0}/{1}?refs=1'.format(endpoint, 'root.json'))
             assert res.status_code == 200
             assert json.loads(schemas['sub/schema.json']) == \
                 json.loads(res.get_data(as_text=True))
