@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -31,6 +31,8 @@ import os
 
 import pkg_resources
 import six
+from flask import request
+from jsonref import JsonRef
 from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
@@ -116,10 +118,13 @@ class InvenioJSONSchemasState(object):
         return os.path.join(self.schemas[path], path)
 
     @lru_cache(maxsize=1000)
-    def get_schema(self, path):
+    def get_schema(self, path, with_refs=False, resolved=False):
         """Retrieve a schema.
 
         :param path: schema's relative path.
+        :param with_refs: replace $refs in the schema.
+        :param resolved: resolve schema using the resolver
+            :py:const:`invenio_jsonschemas.config.JSONSCHEMAS_RESOLVER_CLS`
         :raises invenio_jsonschemas.errors.JSONSchemaNotFound: If no schema
             was found in the specified path.
         :returns: The schema in a dictionary form.
@@ -127,7 +132,16 @@ class InvenioJSONSchemasState(object):
         if path not in self.schemas:
             raise JSONSchemaNotFound(path)
         with open(os.path.join(self.schemas[path], path)) as file_:
-            return json.load(file_)
+            schema = json.load(file_)
+            if with_refs:
+                schema = JsonRef.replace_refs(
+                    schema,
+                    base_uri=request.base_url,
+                    loader=self.loader_cls() if self.loader_cls else None,
+                )
+            if resolved:
+                schema = self.resolver_cls(schema)
+            return schema
 
     def list_schemas(self):
         """List all JSON-schema names.
@@ -174,6 +188,14 @@ class InvenioJSONSchemasState(object):
             return import_string(cls)
         return cls
 
+    @cached_property
+    def resolver_cls(self):
+        """Loader to resolve the schema."""
+        cls = self.app.config['JSONSCHEMAS_RESOLVER_CLS']
+        if isinstance(cls, six.string_types):
+            return import_string(cls)
+        return cls
+
 
 class InvenioJSONSchemas(object):
     """Invenio-JSONSchemas extension.
@@ -196,7 +218,7 @@ class InvenioJSONSchemas(object):
         if app:
             self.init_app(app, **kwargs)
 
-    def init_app(self, app, entry_point_group=None):
+    def init_app(self, app, entry_point_group=None, register_blueprint=True):
         """Flask application initialization.
 
         :param app: The Flask application.
@@ -219,10 +241,11 @@ class InvenioJSONSchemas(object):
                 directory = os.path.dirname(base_entry.load().__file__)
                 state.register_schemas_dir(directory)
 
-        app.register_blueprint(
-            create_blueprint(state),
-            url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
-        )
+        if register_blueprint:
+            app.register_blueprint(
+                create_blueprint(state),
+                url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
+            )
 
         self._state = app.extensions['invenio-jsonschemas'] = state
         return state
@@ -241,3 +264,31 @@ class InvenioJSONSchemas(object):
     def __getattr__(self, name):
         """Proxy to state object."""
         return getattr(self._state, name, None)
+
+
+class InvenioJSONSchemasUI(InvenioJSONSchemas):
+    """Invenio-JSONSchemas extension for UI."""
+
+    def init_app(self, app):
+        """Flask application initialization.
+
+        :param app: The Flask application.
+        """
+        return super(InvenioJSONSchemasUI, self).init_app(
+            app,
+            register_blueprint=app.config['JSONSCHEMAS_REGISTER_ENDPOINTS_UI']
+        )
+
+
+class InvenioJSONSchemasAPI(InvenioJSONSchemas):
+    """Invenio-JSONSchemas extension for API."""
+
+    def init_app(self, app):
+        """Flask application initialization.
+
+        :param app: The Flask application.
+        """
+        return super(InvenioJSONSchemasAPI, self).init_app(
+            app,
+            register_blueprint=app.config['JSONSCHEMAS_REGISTER_ENDPOINTS_API']
+        )

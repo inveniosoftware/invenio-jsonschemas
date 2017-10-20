@@ -36,5 +36,22 @@ JSONSCHEMAS_URL_SCHEME = 'https'
 JSONSCHEMAS_REPLACE_REFS = False
 """Whether to resolve $ref before serving a schema."""
 
+JSONSCHEMAS_RESOLVE_SCHEMA = False
+"""Whether to resolve $ref and allOf before serving a schema."""
+
 JSONSCHEMAS_LOADER_CLS = None
 """Loader class used in ``JSONRef`` when replacing ``$ref``."""
+
+JSONSCHEMAS_RESOLVER_CLS = 'invenio_jsonschemas.utils.resolve_schema'
+"""Resolver used to resolve the schema.
+
+if :py:const:`invenio_jsonschemas.config.JSONSCHEMAS_RESOLVE_SCHEMA` is
+``True`` or there is ``?resolved=1`` parameter on the request the resolver
+will run over the schema. This can be used for custom schemas resolver.
+"""
+
+JSONSCHEMAS_REGISTER_ENDPOINTS_API = True
+"""Register the endpoints on the API app."""
+
+JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
+"""Register the endpoints on the UI app."""

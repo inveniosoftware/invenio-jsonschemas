@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -38,7 +38,8 @@ from jsonresolver.contrib.jsonschema import ref_resolver_factory
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-from invenio_jsonschemas import InvenioJSONSchemas
+from invenio_jsonschemas import InvenioJSONSchemas, InvenioJSONSchemasAPI, \
+    InvenioJSONSchemasUI
 from invenio_jsonschemas.config import JSONSCHEMAS_URL_SCHEME
 from invenio_jsonschemas.errors import JSONSchemaDuplicate, JSONSchemaNotFound
 
@@ -49,10 +50,20 @@ def test_version():
     assert __version__
 
 
-def test_init():
+def test_init(app):
     """Test extension initialization."""
     app = Flask('testapp')
     ext = InvenioJSONSchemas(app)
+    assert 'invenio-jsonschemas' in app.extensions
+
+    app = Flask('testapp')
+    app.config['JSONSCHEMAS_REGISTER_ENDPOINTS_UI'] = True
+    ext = InvenioJSONSchemasUI(app)
+    assert 'invenio-jsonschemas' in app.extensions
+
+    app = Flask('testapp')
+    app.config['JSONSCHEMAS_REGISTER_ENDPOINTS_API'] = True
+    ext = InvenioJSONSchemasAPI(app)
     assert 'invenio-jsonschemas' in app.extensions
 
     app = Flask('testapp')
@@ -250,6 +261,44 @@ def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
             app.config['JSONSCHEMAS_REPLACE_REFS'] = False
 
             res = client.get('{0}/{1}?refs=1'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['sub/schema.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+
+def test_replace_resolve_in_view(app, pkg_factory, mock_entry_points):
+    """Test replace refs config in view."""
+    schemas = {
+        'root.json': '{"type": "object","allOf":'
+                     '[{"$ref": "sub/schema.json"}]}',
+        'sub/schema.json': schema_template.format('test')
+    }
+
+    entry_point_group = 'invenio_jsonschema_test_entry_point'
+    endpoint = '/testschemas'
+    app.config['JSONSCHEMAS_ENDPOINT'] = endpoint
+    with pkg_factory(schemas) as pkg1:
+        mock_entry_points.add(entry_point_group, 'entry1', pkg1)
+        ext = InvenioJSONSchemas(entry_point_group=entry_point_group)
+        ext = ext.init_app(app)
+
+        with app.test_client() as client:
+            res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['root.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+            app.config['JSONSCHEMAS_RESOLVE_SCHEMA'] = True
+
+            res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
+            assert res.status_code == 200
+            assert json.loads(schemas['sub/schema.json']) == \
+                json.loads(res.get_data(as_text=True))
+
+            app.config['JSONSCHEMAS_RESOLVE_SCHEMA'] = False
+
+            res = client.get(
+                '{0}/{1}?resolved=1'.format(endpoint, 'root.json'))
             assert res.status_code == 200
             assert json.loads(schemas['sub/schema.json']) == \
                 json.loads(res.get_data(as_text=True))

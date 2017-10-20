@@ -36,8 +36,15 @@ that they will never change, to avoid broken references.
 
 from __future__ import absolute_import, print_function
 
-from .ext import InvenioJSONSchemas
+from .ext import InvenioJSONSchemas, InvenioJSONSchemasUI, \
+    InvenioJSONSchemasAPI
 from .proxies import current_jsonschemas
 from .version import __version__
 
-__all__ = ('__version__', 'InvenioJSONSchemas', 'current_jsonschemas')
+__all__ = (
+    '__version__',
+    'InvenioJSONSchemas'
+    'InvenioJSONSchemasUI',
+    'InvenioJSONSchemasAPI',
+    'current_jsonschemas',
+)
