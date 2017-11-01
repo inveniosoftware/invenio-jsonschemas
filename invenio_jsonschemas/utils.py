@@ -30,15 +30,27 @@ from copy import deepcopy
 
 
 def resolve_schema(schema):
-    """Resolve schema's ``allOf``.
+    """Transform JSON schemas "allOf".
+
+    This is the default schema resolver.
+
+    This function was created because some javascript JSON Schema libraries
+    don't support "allOf". We recommend to use this function only in this
+    specific case.
+
+    This function is transforming the JSON Schema by removing "allOf" keywords.
+    It recursively merges the sub-schemas as dictionaries. The process is
+    completely custom and works only for simple JSON Schemas which use basic
+    types (object, string, number, ...). Optional structures like "schema
+    dependencies" or "oneOf" keywords are not supported.
 
     :param dict schema: the schema to resolve.
     :returns: the resolved schema
 
     .. note::
 
-        The schema should have the ``$ref`` already resolved in for resolving
-        the ``allOf``s.
+        The schema should have the ``$ref`` already resolved before running
+        this method.
     """
     def traverse(schema):
         if isinstance(schema, dict):
@@ -46,7 +58,7 @@ def resolve_schema(schema):
                 for x in schema['allOf']:
                     sub_schema = x
                     sub_schema.pop('title', None)
-                    schema = merge_dicts(schema, sub_schema)
+                    schema = _merge_dicts(schema, sub_schema)
                 schema.pop('allOf')
                 schema = traverse(schema)
             elif 'properties' in schema:
@@ -59,12 +71,12 @@ def resolve_schema(schema):
     return traverse(schema)
 
 
-def merge_dicts(first, second):
+def _merge_dicts(first, second):
     """Merge the 'second' multiple-dictionary into the 'first' one."""
     new = deepcopy(first)
     for k, v in second.items():
         if isinstance(v, dict) and v:
-            ret = merge_dicts(new.get(k, dict()), v)
+            ret = _merge_dicts(new.get(k, dict()), v)
             new[k] = ret
         else:
             new[k] = second[k]
