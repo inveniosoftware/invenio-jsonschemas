@@ -37,7 +37,12 @@ JSONSCHEMAS_REPLACE_REFS = False
 """Whether to resolve $ref before serving a schema."""
 
 JSONSCHEMAS_RESOLVE_SCHEMA = False
-"""Whether to resolve $ref and allOf before serving a schema."""
+"""Whether to resolve schema using the Resolver Class.
+
+If is ``True``, will replace $ref and run the
+:py:const:`invenio_jsonschemas.config.JSONSCHEMAS_RESOLVER_CLS` class
+before serving a schema.
+"""
 
 JSONSCHEMAS_LOADER_CLS = None
 """Loader class used in ``JSONRef`` when replacing ``$ref``."""
