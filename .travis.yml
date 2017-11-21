@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,7 +22,6 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-
 notifications:
   email: false
 
@@ -38,19 +37,15 @@ cache:
 
 env:
   - REQUIREMENTS=lowest
-  - REQUIREMENTS=release
+  - REQUIREMENTS=release DEPLOY=true
   - REQUIREMENTS=devel
 
 python:
   - "2.7"
   - "3.5"
-  - "pypy"
-
-matrix:
-  allow_failures:
-    - python: pypy
 
 before_install:
+  - "nvm install 6; nvm use 6"
   - "travis_retry pip install --upgrade pip setuptools py"
   - "travis_retry pip install twine wheel coveralls requirements-builder"
   - "requirements-builder --level=min setup.py > .travis-lowest-requirements.txt"
@@ -72,7 +67,9 @@ deploy:
   user: jirikuncar
   password:
     secure: 4hCfGqpopcDV6ZNBwoCyN/sbUamDwmyiwsMa4Nz7/H/QCbq/zscEoPgIV8Rz9/mPc865iHQ3ehIgIc1nyk95U1wcgcpHgb1TaAv7EiYwiguM9WbFQYu1b4Sxx+BmyYulE8YqdnpQW/uOCRMaoLh612fqf8ByGxaqtXwGcaFxe6DtxqLcVulVrFD1cg4RIeM84mVoC6Ip0EM0xhDMRAMBL3wH9yTqT3Qs3v0/I75g0rhGya5/IS113iVJIk0/g3yRm0N2UybmTFw25yxFfW0BBuPLlEudANywgE24bBTycMg4v2avqVPsR/1pB9AwCmq3HbrAjZf37lQ98/mX/Zg+nJMiAM6sa7tq4J6XuYZVsAhc1ybjNDlmvxO7k9FE4vbGWKK5lK7eIVu+QQGq9k5RyKQnrJhkjEpA81zoU3vSHDvkMRkiMxUKfE3cUWmKd7mHd/MdSR6sfDpdrGcML/o2EVovhofAMnL/kfy7D7cCBuZjxPCrrR2BIBiMf7v96N8jOaNWyYz/KhL1kSg74zcf/iPdZm4lWL8JIqaw1DaRlkPIzUhTPN6O4/vlyjg9N03Pn0yYpCFmMZlyCQQZNx6Nk1hE7pitHcCnTuChWgCVtD/iZZPAZwpGbu+Fb2aEJTxXBXUICchkFR7mzVvPjHrdmZp23ivRDGzhm7si+djxT0c=
-  distributions: "sdist bdist_wheel"
+  distributions: "compile_catalog sdist bdist_wheel"
   on:
     tags: true
     python: "2.7"
+    repo: inveniosoftware/invenio-jsonschemas
+    condition: $DEPLOY = true

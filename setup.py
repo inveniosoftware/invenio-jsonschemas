@@ -78,7 +78,7 @@ setup(
     version=version,
     description=__doc__,
     long_description=readme + '\n\n' + history,
-    keywords='invenio json schema',
+    keywords='invenio json schema jsonschema',
     license='GPLv2',
     author='CERN',
     author_email='info@inveniosoftware.org',
@@ -115,7 +115,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
         'Development Status :: 4 - Beta',
     ],
 )
