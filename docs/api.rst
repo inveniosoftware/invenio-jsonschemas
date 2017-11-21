@@ -45,3 +45,9 @@ Views
 
 .. automodule:: invenio_jsonschemas.views
    :members:
+
+Utils
+-------------
+
+.. automodule:: invenio_jsonschemas.utils
+   :members:
