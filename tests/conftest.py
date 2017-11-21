@@ -22,7 +22,6 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-
 """Pytest configuration."""
 
 from __future__ import absolute_import, print_function
@@ -72,8 +71,7 @@ def create_file_hierarchy(root_dir_path, files):
 
 @pytest.fixture()
 def dir_factory(tmpdir_factory):
-    """Provide a contextmanager enabling the creation of temporary directories.
-    """
+    """Context manager enabling the creation of temporary directories."""
     @contextmanager
     def dir_builder(files):
         root_dir_path = str(tmpdir_factory.mktemp('test', numbered=True))
@@ -88,8 +86,7 @@ def dir_factory(tmpdir_factory):
 
 @pytest.yield_fixture
 def pkg_factory(tmpdir_factory):
-    """Provide a contextmanager enabling the creation of temporary modules.
-    """
+    """Context manager enabling the creation of temporary modules."""
     modules_path = str(tmpdir_factory.mktemp('test_modules', numbered=True))
 
     @contextmanager
@@ -122,10 +119,12 @@ class MockEntryPoint(EntryPoint):
 
 @pytest.yield_fixture
 def mock_entry_points():
+    """Mock of the JSONSchemas entry points."""
     entry_points = dict()
 
     class EntryPointBuilder(object):
         """Manipulate mock Entrypoints."""
+
         def add(self, group, name, module_name):
             """Register additional entrypoints."""
             group_entry_points = entry_points.setdefault(group, [])
