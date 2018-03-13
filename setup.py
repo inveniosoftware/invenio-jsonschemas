@@ -45,6 +45,9 @@ tests_require = [
 ]
 
 extras_require = {
+    ':python_version=="2.7"': [
+        'functools32>=3.2.3.post2',
+    ],
     'docs': [
         'Sphinx>=1.6.2',
     ],
@@ -52,7 +55,9 @@ extras_require = {
 }
 
 extras_require['all'] = []
-for reqs in extras_require.values():
+for name, reqs in extras_require.items():
+    if name[0] == ':':
+        continue
     extras_require['all'].extend(reqs)
 
 setup_requires = [
