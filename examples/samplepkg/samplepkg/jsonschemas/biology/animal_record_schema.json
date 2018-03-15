@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "id": "http://localhost:5000/schemas/biology/animal_record_schema.json",
-    "allOf": [{ 
+    "allOf": [{
         "$ref": "http://localhost:5000/schemas/record_schema.json"
     }, {
         "type": "object",
