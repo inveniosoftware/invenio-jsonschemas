@@ -19,7 +19,5 @@
 
 Invenio module for building and serving JSONSchemas.
 
-*This is an experimental developer preview release.*
-
 Further documentation is available on
 https://invenio-jsonschemas.readthedocs.io/
