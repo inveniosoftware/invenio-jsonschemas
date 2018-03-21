@@ -9,9 +9,7 @@
 include .dockerignore
 include .editorconfig
 include *.json *.rst *.sh *.txt
-include .lgtm
 include LICENSE
-include MAINTAINERS
 include pytest.ini
 include docs/requirements.txt
 include docs/Makefile
