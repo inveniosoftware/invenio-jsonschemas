@@ -5,18 +5,25 @@
     Invenio is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
-Authors
-=======
+Contributors
+============
 
-Invenio module for building and serving JSONSchemas.
-
-- Alizee Pace <alizee.pace@gmail.com>
-- Jiri Kuncar <jiri.kuncar@cern.ch>
-- Krzysztof Nowak <k.nowak@cern.ch>
-- Lars Holm Nielsen <lars.holm.nielsen@cern.ch>
-- Leonardo Rossi <leonardo.r@cern.ch>
-- Marco Neumann <marco@crepererum.net>
-- Nicolas Harraudeau <nicolas.harraudeau@cern.ch>
-- Sami Hiltunen <sami.mikael.hiltunen@cern.ch>
-- Tibor Simko <tibor.simko@cern.ch>
-- Robin Schroer <sulami@peerwire.org>
+- Alexander Ioannidis
+- Alizee Pace
+- Chiara Bigarella
+- Chris Aslanoglou
+- Diego Rodriguez
+- Harris Tzovanakis
+- Jacopo Notarstefano
+- Javier Martin Montull
+- Jiri Kuncar
+- Krzysztof Nowak
+- Lars Holm Nielsen
+- Leonardo Rossi
+- Marco Neumann
+- Nicolas Harraudeau
+- Paulina Lach
+- Robin Schroer
+- Sami Hiltunen
+- Sebastian Witowski
+- Tibor Simko
