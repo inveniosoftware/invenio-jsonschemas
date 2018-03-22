@@ -156,7 +156,7 @@ schemas and how to load them. The extension loads every schema that is under
 making a network request. This means that reads directly the file of your
 schema. Also, the same happens if you have inside of your schema a ``$ref``
 field pointing to the same url format. You can see the function called when the
-schema url is requested :source:`here <invenio_jsonschemas/views.py#L51>`.
+schema url is requested :source:`here <invenio_jsonschemas/views.py#L35>`.
 
 
 Exposing JSON Schemas
