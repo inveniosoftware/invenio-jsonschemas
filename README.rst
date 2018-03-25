@@ -9,6 +9,9 @@
  Invenio-JSONSchemas
 =====================
 
+.. image:: https://img.shields.io/github/license/inveniosoftware/invenio-jsonschemas.svg
+        :target: https://github.com/inveniosoftware/invenio-jsonschemas/blob/master/LICENSE
+
 .. image:: https://img.shields.io/travis/inveniosoftware/invenio-jsonschemas.svg
         :target: https://travis-ci.org/inveniosoftware/invenio-jsonschemas
 
