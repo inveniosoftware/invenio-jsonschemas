@@ -236,6 +236,7 @@ def test_replace_refs_in_view(app, pkg_factory, mock_entry_points):
                 json.loads(res.get_data(as_text=True))
 
             app.config['JSONSCHEMAS_REPLACE_REFS'] = True
+            app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
             res = client.get('{0}/{1}'.format(endpoint, 'root.json'))
             assert res.status_code == 200
