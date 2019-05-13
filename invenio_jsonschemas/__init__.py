@@ -307,8 +307,8 @@ in the documentation of `Invenio-Records
 
 from __future__ import absolute_import, print_function
 
-from .ext import InvenioJSONSchemas, InvenioJSONSchemasUI, \
-    InvenioJSONSchemasAPI
+from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, \
+    InvenioJSONSchemasUI
 from .proxies import current_jsonschemas
 from .version import __version__
 
