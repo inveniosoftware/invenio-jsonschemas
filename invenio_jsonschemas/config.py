@@ -44,3 +44,25 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_API = True
 
 JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 """Register the endpoints on the UI app."""
+
+JSONSCHEMAS_SCHEMAS = None  # loads all JSON Schemas
+"""List of entrypoint names to register JSON Schemas for.
+
+If `None`, all JSON Schemas defined through the ``invenio_jsonschemas.schemas``
+entry point in setup.py will be registered.
+If ``[]``, no JSON Schemas will be registered.
+
+For example, if you only want to register `foo` and skip `bar` schemas:
+
+.. code-block:: python
+
+    # in your `setup.py` you would specify:
+    entry_points={
+        'invenio_jsonschemas.schemas': [
+            'foo = invenio_foo.schemas',
+            'bar = invenio_bar.schemas',
+        ],
+    }
+    # and in your config.py
+    JSONSCHEMAS_SCHEMAS = ['foo']
+"""

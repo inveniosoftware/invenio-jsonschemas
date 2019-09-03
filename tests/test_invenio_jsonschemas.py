@@ -380,3 +380,39 @@ def test_url_mapping(app, dir_factory, url_scheme):
                 .format(url_scheme)
             ) == ext.path_to_url('sub1/subschema_1.json')
             assert ext.path_to_url('invalid.json') is None
+
+
+@pytest.mark.parametrize('whitelisted, expected', [
+    (None, ['entry1', 'entry2']),
+    ([], []),
+    (['entry1'], ['entry1']),
+    (['entry2'], ['entry2']),
+    (['entry3'], []),
+])
+def test_whitelisting_entry_points(app, pkg_factory, mock_entry_points,
+                                   whitelisted, expected):
+    """Test whitelisting entry points."""
+    app.config['JSONSCHEMAS_SCHEMAS'] = whitelisted
+
+    entries = dict(
+        entry1=build_schemas(1),
+        entry2=build_schemas(2)
+    )
+
+    all_schemas = dict()
+    all_schemas.update(entries['entry1'])
+    all_schemas.update(entries['entry2'])
+
+    entry_point_group = 'invenio_jsonschema_test_entry_point'
+    with pkg_factory(entries['entry1']) as pkg1, \
+            pkg_factory(entries['entry2']) as pkg2:
+        mock_entry_points.add(entry_point_group, 'entry1', pkg1)
+        mock_entry_points.add(entry_point_group, 'entry2', pkg2)
+        ext = InvenioJSONSchemas()
+        ext = ext.init_app(app, entry_point_group=entry_point_group)
+        # Test if all whitelisted schemas are correctly found
+        expected_schemas = set()
+        for name in expected:
+            for schema in entries[name].keys():
+                expected_schemas.add(schema)
+        assert set(ext.list_schemas()) == expected_schemas

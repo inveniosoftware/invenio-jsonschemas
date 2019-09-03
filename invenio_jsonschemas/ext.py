@@ -224,10 +224,13 @@ class InvenioJSONSchemas(object):
 
         # Load the json-schemas from extension points.
         if entry_point_group:
+            whitelisted_entries = app.config['JSONSCHEMAS_SCHEMAS']
             for base_entry in pkg_resources.iter_entry_points(
                     entry_point_group):
-                directory = os.path.dirname(base_entry.load().__file__)
-                state.register_schemas_dir(directory)
+                if whitelisted_entries is None or \
+                        base_entry.name in whitelisted_entries:
+                    directory = os.path.dirname(base_entry.load().__file__)
+                    state.register_schemas_dir(directory)
 
         # Init blueprints
         _register_blueprint = app.config.get(register_config_blueprint)
