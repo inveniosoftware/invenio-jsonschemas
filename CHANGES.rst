@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 1.0.1 (released 2019-09-04)
+
+- Adds config ``JSONSCHEMAS_SCHEMAS`` to whitelist entrypoint names
+
 Version 1.0.0 (released 2018-03-23)
 
 - Initial public release.
