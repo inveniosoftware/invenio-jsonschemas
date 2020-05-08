@@ -48,7 +48,7 @@ setup_requires = [
 ]
 
 install_requires = [
-    'Flask>=0.11.1',
+    'Flask>=1.0.4',
     'jsonref>=0.1',
     'jsonresolver>=0.2.1,<0.3.0',
 ]
