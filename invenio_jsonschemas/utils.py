@@ -39,11 +39,10 @@ def resolve_schema(schema):
     def traverse(schema):
         if isinstance(schema, dict):
             if 'allOf' in schema:
-                for x in schema['allOf']:
+                for x in schema.pop('allOf'):
                     sub_schema = x
                     sub_schema.pop('title', None)
                     schema = _merge_dicts(schema, sub_schema)
-                schema.pop('allOf')
                 schema = traverse(schema)
             elif 'properties' in schema:
                 for x in schema.get('properties', []):
