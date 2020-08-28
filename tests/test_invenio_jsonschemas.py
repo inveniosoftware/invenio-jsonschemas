@@ -26,6 +26,7 @@ from invenio_jsonschemas import InvenioJSONSchemas, InvenioJSONSchemasAPI, \
     InvenioJSONSchemasUI
 from invenio_jsonschemas.config import JSONSCHEMAS_URL_SCHEME
 from invenio_jsonschemas.errors import JSONSchemaDuplicate, JSONSchemaNotFound
+from invenio_jsonschemas.utils import resolve_schema
 
 
 def test_version():
@@ -416,3 +417,41 @@ def test_whitelisting_entry_points(app, pkg_factory, mock_entry_points,
             for schema in entries[name].keys():
                 expected_schemas.add(schema)
         assert set(ext.list_schemas()) == expected_schemas
+
+
+def test_resolve_schema():
+    """Test case for nested allOf and its resolving."""
+    test_schema = {
+        "$schema": "http://json-schema.org/schema#",
+        "id": "http://localhost:5000/schemas/biology/test.json",
+        "allOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "species": {
+                        "type": "string"
+                    }
+                }
+            },
+            {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "species_nested": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    resolved_schema = {
+        '$schema': 'http://json-schema.org/schema#',
+        'id': 'http://localhost:5000/schemas/biology/test.json',
+        'properties': {
+            'species': {'type': 'string'},
+            'species_nested': {'type': 'string'}},
+        'type': 'object'}
+    assert resolve_schema(test_schema) == resolved_schema
