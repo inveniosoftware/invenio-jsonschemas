@@ -171,11 +171,14 @@ the schemas serving you can do it as shown below:
 .. code block:: console
 
     app.config['SCHEMA_ENABLE_VARIABLE'] = False
-    ext = InvenioJSONSchemas(app, register_config_blueprint='SCHEMA_ENABLE_VARIABLE')
+    ext = InvenioJSONSchemas(
+            app, register_config_blueprint='SCHEMA_ENABLE_VARIABLE'
+          )
 
 Also by default the schema endpoint will be prefixed by ``/schemas``. If you
 want to change that you can change the ``JSONSCHEMAS_ENDPOINT`` configuration
-variable. For more available configuration options see the :doc:`configuration`.
+variable.
+For more available configuration options see the :doc:`configuration`.
 
 For the above example the two schemas would we available under:
 
@@ -269,7 +272,8 @@ can be shown below:
     ]
     ...
 
-If you make a request to ``GET https://myapp.org/schemas/record.json?resolved=1``
+If you make a request to
+``GET https://myapp.org/schemas/record.json?resolved=1``
 you would get a response in the following format:
 
 .. code-block:: javascript
