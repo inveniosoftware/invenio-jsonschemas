@@ -8,7 +8,12 @@
 Changes
 =======
 
-Version 1.1.0 (released 2010-03-12)
+Version 1.1.1 (released 2020-12-09)
+
+- Migrates CI to GitHub actions.
+- Fixes issue related to nested `allOf` being ignored, and added tests for it.
+
+Version 1.1.0 (released 2020-03-12)
 
 - Removes support for Python 2.7
 - Changes Flask dependency to centrally managed by invenio-base
