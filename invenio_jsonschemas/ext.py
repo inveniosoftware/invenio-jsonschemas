@@ -12,6 +12,7 @@ from __future__ import absolute_import, print_function
 
 import json
 import os
+from urllib.parse import urljoin
 
 import pkg_resources
 import six
@@ -179,6 +180,28 @@ class InvenioJSONSchemasState(object):
         if isinstance(cls, six.string_types):
             return import_string(cls)
         return cls
+
+    def refresolver_store(self):
+        """Builds a local ref resolver store with aliased local references.
+
+        Abstracts configurations such as URI scheme and hostname under
+        the configured non-standard URI scheme.
+        """
+        store = {}
+        local_refresolver_uri_scheme = uri_scheme = self.app.config.get(
+            "JSONSCHEMAS_LOCAL_REFRESOLVER_URI_SCHEME")
+        for schema_uri, schema in self.schemas.items():
+            schema = self.get_schema(schema_uri)
+            schema_uri = "{uri_scheme}{schema_path}".format(
+                uri_scheme=local_refresolver_uri_scheme,
+                schema_path=schema_uri.lstrip("/"),
+            )
+            if schema.get("$id"):
+                assert schema.get("$id") == schema_uri
+
+            store[schema_uri] = schema
+
+        return store
 
 
 class InvenioJSONSchemas(object):

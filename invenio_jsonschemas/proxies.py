@@ -17,3 +17,8 @@ current_jsonschemas = LocalProxy(
     lambda: current_app.extensions['invenio-jsonschemas']
 )
 """Helper proxy to access state object."""
+
+current_refresolver_store = LocalProxy(
+    lambda: current_app.extensions['invenio-jsonschemas'].refresolver_store()
+)
+"""Current JSONSchema ref resolver store."""

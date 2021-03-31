@@ -455,3 +455,16 @@ def test_resolve_schema():
             'species_nested': {'type': 'string'}},
         'type': 'object'}
     assert resolve_schema(test_schema) == resolved_schema
+
+
+def test_export_refresolver_store(app, dir_factory):
+    """Test export local ref resolver store."""
+    ext = InvenioJSONSchemas(app, entry_point_group=None)
+    schema_files = build_schemas(1)
+    with dir_factory(schema_files) as directory:
+        for schema in schema_files.keys():
+            ext.register_schema(directory, schema)
+
+        for schema in ext.refresolver_store():
+            assert schema.startswith(
+                app.config.get("JSONSCHEMAS_LOCAL_REFRESOLVER_URI_SCHEME"))

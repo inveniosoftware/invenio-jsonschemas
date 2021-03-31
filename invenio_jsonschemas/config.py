@@ -66,3 +66,6 @@ For example, if you only want to register `foo` and skip `bar` schemas:
     # and in your config.py
     JSONSCHEMAS_SCHEMAS = ['foo']
 """
+
+JSONSCHEMAS_LOCAL_REFRESOLVER_URI_SCHEME = "local://"
+"""Non-standard URI scheme to reference local schemas."""
