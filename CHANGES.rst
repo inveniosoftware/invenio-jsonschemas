@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version 1.1.2 (released 2021-04-06)
+
+- Adds method to build a ref resolver store from the registry with a local
+  URI scheme (e.g. local://).
+
 Version 1.1.1 (released 2020-12-09)
 
 - Migrates CI to GitHub actions.
