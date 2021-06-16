@@ -25,7 +25,7 @@ class JSONSchemaNotFound(JSONSchemaError):
         """
         self.schema = schema
         super(JSONSchemaNotFound, self).__init__(
-            'Schema "{}" not found'.format(schema), *args, **kwargs
+            "Schema {schema} not found".format(schema=schema), *args, **kwargs
         )
 
 
@@ -41,9 +41,8 @@ class JSONSchemaDuplicate(JSONSchemaError):
         """
         self.schema = schema
         super(JSONSchemaDuplicate, self).__init__(
-            'Schema "{schema}" defined in multiple ' +
-            'directories: "{first}" and "{second}"'.format(
-                schema=schema,
+            "Schema {schema} defined in multiple ".format(schema=schema) +
+            "directories: {first} and {second}".format(
                 first=first_dir,
                 second=second_dir),
             *args, **kwargs)
