@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 1.1.3 (released 2021-06-17)
+
+- Fix string interpolation on error messages.
+
 Version 1.1.2 (released 2021-04-06)
 
 - Adds method to build a ref resolver store from the registry with a local
