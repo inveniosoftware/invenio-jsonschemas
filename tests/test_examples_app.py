@@ -41,7 +41,11 @@ def example_app():
     yield webapp
 
     # Stop server
-    os.killpg(webapp.pid, signal.SIGTERM)
+    try:
+        os.killpg(webapp.pid, signal.SIGTERM)
+    except OSError as err:
+        print(f'ERROR stop server: {webapp.pid}')
+        os.system(f'sudo kill {webapp.pid}')
 
     # Tear down example app
     cmd = './app-teardown.sh'

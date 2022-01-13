@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2022 RERO.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -44,6 +45,8 @@ setup_requires = [
 install_requires = [
     'invenio-base>=1.2.2',
     'jsonref>=0.1',
+    'importlib_metadata>=4.0',
+    'importlib_resources>=4.0'
 ]
 
 packages = find_packages()
