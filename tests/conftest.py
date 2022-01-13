@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2022 RERO.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -18,8 +19,9 @@ from contextlib import contextmanager
 
 import pytest
 from flask import Flask
+from importlib_metadata import EntryPoint
 from mock import patch
-from pkg_resources import EntryPoint
+from werkzeug.utils import import_string
 
 
 @pytest.fixture()
@@ -93,36 +95,46 @@ def pkg_factory(tmpdir_factory):
         sys.path.remove(modules_path)
 
 
+# class MockEntryPoint(EntryPoint):
+#     """Mocking of entrypoint."""
+
+#     def load(self):
+#         """Mock load entry point."""
+#         if self.name == 'importfail':
+#             raise ImportError()
+#         else:
+#             return import_string(self.name)
+
 class MockEntryPoint(EntryPoint):
     """Mocking of entrypoint."""
 
     def load(self):
         """Mock load entry point."""
-        return __import__(self.module_name)
+        return __import__(self.module)
 
 
 @pytest.yield_fixture
 def mock_entry_points():
     """Mock of the JSONSchemas entry points."""
-    entry_points = dict()
+    entry_points = {}
 
     class EntryPointBuilder(object):
         """Manipulate mock Entrypoints."""
 
-        def add(self, group, name, module_name):
+        def add(self, group, name, module):
             """Register additional entrypoints."""
-            group_entry_points = entry_points.setdefault(group, [])
-            # entrypoint = EntryPoint.parse(
-            #     '{name}={module}'.format(name=name, module=module_name)
-            # )
-            group_entry_points.append(MockEntryPoint(name, module_name))
-            # group_entry_points.append(entrypoint)
+            entry_points[name] = [
+                MockEntryPoint(name=name, value=module, group=group)]
 
-    def mock_entry_points(group):
-        groups = entry_points.keys() if group is None else [group]
-        for key in groups:
-            for entry_point in entry_points[key]:
-                yield entry_point
+    def fn(group=None):
+        if group:
+            entry_points_group = []
+            for eps in entry_points.values():
+                for ep in eps:
+                    if ep.group == group:
+                        entry_points_group.append(ep)
+            return entry_points_group
+        return entry_points
 
-    with patch('pkg_resources.iter_entry_points', mock_entry_points):
+    with patch('importlib_metadata.entry_points', fn):
         yield EntryPointBuilder()

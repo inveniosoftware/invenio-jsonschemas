@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2022 RERO.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -14,7 +15,7 @@ import json
 import os
 from urllib.parse import urljoin
 
-import pkg_resources
+import importlib_metadata
 import six
 from flask import request
 from jsonref import JsonRef
@@ -248,8 +249,10 @@ class InvenioJSONSchemas(object):
         # Load the json-schemas from extension points.
         if entry_point_group:
             whitelisted_entries = app.config['JSONSCHEMAS_SCHEMAS']
-            for base_entry in pkg_resources.iter_entry_points(
-                    entry_point_group):
+            # change to set to delete duplicate entries
+            for base_entry in set(importlib_metadata.entry_points(
+                group=entry_point_group
+            )):
                 if whitelisted_entries is None or \
                         base_entry.name in whitelisted_entries:
                     directory = os.path.dirname(base_entry.load().__file__)
