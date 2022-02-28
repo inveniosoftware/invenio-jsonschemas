@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 1.1.4 (released 2022-02-28)
+
+- Changes from pkg_resources to importlib for entry points iteration.
+
 Version 1.1.3 (released 2021-06-17)
 
 - Fix string interpolation on error messages.
