@@ -11,14 +11,12 @@
 from setuptools import setup
 
 setup(
-    name='samplepkg-invenio-jsonschemas',
-    version='0.0.0',
+    name="samplepkg-invenio-jsonschemas",
+    version="0.0.0",
     zip_safe=False,
     include_package_data=True,
-    packages=['samplepkg'],
+    packages=["samplepkg"],
     entry_points={
-        'invenio_jsonschemas.schemas': [
-            'samplepkg = samplepkg.jsonschemas'
-        ],
+        "invenio_jsonschemas.schemas": ["samplepkg = samplepkg.jsonschemas"],
     },
 )

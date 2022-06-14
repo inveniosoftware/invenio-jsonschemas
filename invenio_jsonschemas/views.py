@@ -13,8 +13,7 @@ from __future__ import absolute_import, print_function
 import json
 import os
 
-from flask import Blueprint, abort, current_app, jsonify, request, \
-    send_from_directory
+from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
 from jsonref import JsonRef
 
 from .errors import JSONSchemaNotFound
@@ -27,11 +26,11 @@ def create_blueprint(state):
         instance used to retrieve the schemas.
     """
     blueprint = Blueprint(
-        'invenio_jsonschemas',
+        "invenio_jsonschemas",
         __name__,
     )
 
-    @blueprint.route('/<path:schema_path>')
+    @blueprint.route("/<path:schema_path>")
     def get_schema(schema_path):
         """Retrieve a schema."""
         try:
@@ -40,22 +39,19 @@ def create_blueprint(state):
             abort(404)
 
         resolved = request.args.get(
-            'resolved',
-            current_app.config.get('JSONSCHEMAS_RESOLVE_SCHEMA'),
-            type=int
+            "resolved", current_app.config.get("JSONSCHEMAS_RESOLVE_SCHEMA"), type=int
         )
 
-        with_refs = request.args.get(
-            'refs',
-            current_app.config.get('JSONSCHEMAS_REPLACE_REFS'),
-            type=int
-        ) or resolved
+        with_refs = (
+            request.args.get(
+                "refs", current_app.config.get("JSONSCHEMAS_REPLACE_REFS"), type=int
+            )
+            or resolved
+        )
 
         if resolved or with_refs:
             schema = state.get_schema(
-                schema_path,
-                with_refs=with_refs,
-                resolved=resolved
+                schema_path, with_refs=with_refs, resolved=resolved
             )
             return jsonify(schema)
         else:

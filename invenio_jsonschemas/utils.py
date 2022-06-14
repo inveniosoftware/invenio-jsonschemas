@@ -36,21 +36,22 @@ def resolve_schema(schema):
         The schema should have the ``$ref`` already resolved before running
         this method.
     """
+
     def traverse(schema):
         if isinstance(schema, dict):
-            if 'allOf' in schema:
-                for x in schema.pop('allOf'):
+            if "allOf" in schema:
+                for x in schema.pop("allOf"):
                     sub_schema = x
-                    sub_schema.pop('title', None)
+                    sub_schema.pop("title", None)
                     schema = _merge_dicts(schema, sub_schema)
                 schema = traverse(schema)
-            elif 'properties' in schema:
-                for x in schema.get('properties', []):
-                    schema['properties'][x] = traverse(
-                        schema['properties'][x])
-            elif 'items' in schema:
-                schema['items'] = traverse(schema['items'])
+            elif "properties" in schema:
+                for x in schema.get("properties", []):
+                    schema["properties"][x] = traverse(schema["properties"][x])
+            elif "items" in schema:
+                schema["items"] = traverse(schema["items"])
         return schema
+
     return traverse(schema)
 
 

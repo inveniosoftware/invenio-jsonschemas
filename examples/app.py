@@ -47,7 +47,7 @@ from invenio_jsonschemas import InvenioJSONSchemas
 app = Flask(__name__)
 
 # set the endpoint serving the JSON schemas
-app.config['JSONSCHEMAS_ENDPOINT'] = '/schemas'
+app.config["JSONSCHEMAS_ENDPOINT"] = "/schemas"
 
 # Initialize the application with the InvenioJSONSchema extension.
 # This registers the jsonschemas from examples/samplepkg/jsonschemas as
@@ -55,10 +55,10 @@ app.config['JSONSCHEMAS_ENDPOINT'] = '/schemas'
 ext = InvenioJSONSchemas(app)
 
 # list all registered schemas
-print('SCHEMAS >> {}'.format(ext.list_schemas()))
+print("SCHEMAS >> {}".format(ext.list_schemas()))
 for schema in ext.list_schemas():
-    print('=' * 50)
-    print('SCHEMA {}'.format(schema))
+    print("=" * 50)
+    print("SCHEMA {}".format(schema))
     # retrieve the schema content
     print(json.dumps(ext.get_schema(schema), indent=4))
 

@@ -6,7 +6,7 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-u"""Invenio-JSONSchemas is a module for building and serving JSON Schemas.
+"""Invenio-JSONSchemas is a module for building and serving JSON Schemas.
 
 Using this module one can:
 
@@ -311,16 +311,15 @@ in the documentation of `Invenio-Records
 
 from __future__ import absolute_import, print_function
 
-from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, \
-    InvenioJSONSchemasUI
+from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, InvenioJSONSchemasUI
 from .proxies import current_jsonschemas
 
-__version__ = '1.1.4'
+__version__ = "1.1.4"
 
 __all__ = (
-    '__version__',
-    'InvenioJSONSchemas',
-    'InvenioJSONSchemasUI',
-    'InvenioJSONSchemasAPI',
-    'current_jsonschemas',
+    "__version__",
+    "InvenioJSONSchemas",
+    "InvenioJSONSchemasUI",
+    "InvenioJSONSchemasAPI",
+    "current_jsonschemas",
 )

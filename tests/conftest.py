@@ -27,9 +27,9 @@ from werkzeug.utils import import_string
 @pytest.fixture()
 def app():
     """Flask application fixture."""
-    app = Flask('testapp')
+    app = Flask("testapp")
     app.config.update(
-        JSONSCHEMAS_LOADER_CLS='helpers:LOADER_CLS',
+        JSONSCHEMAS_LOADER_CLS="helpers:LOADER_CLS",
         JSONSCHEMAS_REGISTER_ENDPOINTS_UI=True,
         TESTING=True,
     )
@@ -44,23 +44,24 @@ def create_file_hierarchy(root_dir_path, files):
     """
     for path, content in files.items():
         if os.path.isabs(path):
-            raise Exception('Path {} cannot be absolute'.format(path))
+            raise Exception("Path {} cannot be absolute".format(path))
         dir_path = os.path.join(root_dir_path, os.path.dirname(path))
         file_path = os.path.join(root_dir_path, path)
         if dir_path and not os.path.exists(dir_path):
             os.makedirs(dir_path)
         elif os.path.isfile(file_path):
-            raise Exception('Path {} is a directory'.format(file_path))
-        with open(file_path, 'w') as f:
+            raise Exception("Path {} is a directory".format(file_path))
+        with open(file_path, "w") as f:
             f.write(content)
 
 
 @pytest.fixture()
 def dir_factory(tmpdir_factory):
     """Context manager enabling the creation of temporary directories."""
+
     @contextmanager
     def dir_builder(files):
-        root_dir_path = str(tmpdir_factory.mktemp('test', numbered=True))
+        root_dir_path = str(tmpdir_factory.mktemp("test", numbered=True))
         create_file_hierarchy(root_dir_path, files)
         try:
             yield os.path.abspath(root_dir_path)
@@ -73,14 +74,14 @@ def dir_factory(tmpdir_factory):
 @pytest.yield_fixture
 def pkg_factory(tmpdir_factory):
     """Context manager enabling the creation of temporary modules."""
-    modules_path = str(tmpdir_factory.mktemp('test_modules', numbered=True))
+    modules_path = str(tmpdir_factory.mktemp("test_modules", numbered=True))
 
     @contextmanager
     def pkg_builder(files):
         mod_path = tempfile.mkdtemp(dir=modules_path)
         create_file_hierarchy(mod_path, files)
         # create __init__.py file
-        with open(os.path.join(mod_path, '__init__.py'), 'a'):
+        with open(os.path.join(mod_path, "__init__.py"), "a"):
             pass
         # return the module name
         try:
@@ -105,6 +106,7 @@ def pkg_factory(tmpdir_factory):
 #         else:
 #             return import_string(self.name)
 
+
 class MockEntryPoint(EntryPoint):
     """Mocking of entrypoint."""
 
@@ -123,8 +125,7 @@ def mock_entry_points():
 
         def add(self, group, name, module):
             """Register additional entrypoints."""
-            entry_points[name] = [
-                MockEntryPoint(name=name, value=module, group=group)]
+            entry_points[name] = [MockEntryPoint(name=name, value=module, group=group)]
 
     def fn(group=None):
         if group:
@@ -136,5 +137,5 @@ def mock_entry_points():
             return entry_points_group
         return entry_points
 
-    with patch('importlib_metadata.entry_points', fn):
+    with patch("importlib_metadata.entry_points", fn):
         yield EntryPointBuilder()

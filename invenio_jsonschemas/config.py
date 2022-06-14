@@ -8,13 +8,13 @@
 
 """Default configuration."""
 
-JSONSCHEMAS_HOST = 'localhost'
+JSONSCHEMAS_HOST = "localhost"
 """Default json schema host."""
 
-JSONSCHEMAS_ENDPOINT = '/schemas'
+JSONSCHEMAS_ENDPOINT = "/schemas"
 """Default schema endpoint."""
 
-JSONSCHEMAS_URL_SCHEME = 'https'
+JSONSCHEMAS_URL_SCHEME = "https"
 """Default url scheme for schemas."""
 
 JSONSCHEMAS_REPLACE_REFS = False
@@ -31,7 +31,7 @@ before serving a schema.
 JSONSCHEMAS_LOADER_CLS = None
 """Loader class used in ``JSONRef`` when replacing ``$ref``."""
 
-JSONSCHEMAS_RESOLVER_CLS = 'invenio_jsonschemas.utils.resolve_schema'
+JSONSCHEMAS_RESOLVER_CLS = "invenio_jsonschemas.utils.resolve_schema"
 """Resolver used to resolve the schema.
 
 if :py:const:`invenio_jsonschemas.config.JSONSCHEMAS_RESOLVE_SCHEMA` is

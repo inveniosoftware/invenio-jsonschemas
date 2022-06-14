@@ -44,11 +44,16 @@ class InvenioJSONSchemasState(object):
         """
         self.app = app
         self.schemas = {}
-        self.url_map = Map([Rule(
-            '{0}/<path:path>'.format(self.app.config['JSONSCHEMAS_ENDPOINT']),
-            endpoint='schema',
-            host=self.app.config['JSONSCHEMAS_HOST'],
-        )], host_matching=True)
+        self.url_map = Map(
+            [
+                Rule(
+                    "{0}/<path:path>".format(self.app.config["JSONSCHEMAS_ENDPOINT"]),
+                    endpoint="schema",
+                    host=self.app.config["JSONSCHEMAS_HOST"],
+                )
+            ],
+            host_matching=True,
+        )
 
     def register_schemas_dir(self, directory):
         """Recursively register all json-schemas in a directory.
@@ -57,16 +62,14 @@ class InvenioJSONSchemasState(object):
         """
         for root, dirs, files in os.walk(directory):
             dir_path = os.path.relpath(root, directory)
-            if dir_path == '.':
-                dir_path = ''
+            if dir_path == ".":
+                dir_path = ""
             for file_ in files:
-                if file_.lower().endswith(('.json')):
+                if file_.lower().endswith((".json")):
                     schema_name = os.path.join(dir_path, file_)
                     if schema_name in self.schemas:
                         raise JSONSchemaDuplicate(
-                            schema_name,
-                            self.schemas[schema_name],
-                            directory
+                            schema_name, self.schemas[schema_name], directory
                         )
                     self.schemas[schema_name] = os.path.abspath(directory)
 
@@ -146,8 +149,8 @@ class InvenioJSONSchemasState(object):
         parts = urlsplit(url)
         try:
             loader, args = self.url_map.bind(parts.netloc).match(parts.path)
-            path = args.get('path')
-            if loader == 'schema' and path in self.schemas:
+            path = args.get("path")
+            if loader == "schema" and path in self.schemas:
                 return path
         except HTTPException:
             return None
@@ -161,15 +164,14 @@ class InvenioJSONSchemasState(object):
         if path not in self.schemas:
             return None
         return self.url_map.bind(
-            self.app.config['JSONSCHEMAS_HOST'],
-            url_scheme=self.app.config['JSONSCHEMAS_URL_SCHEME']
-        ).build(
-            'schema', values={'path': path}, force_external=True)
+            self.app.config["JSONSCHEMAS_HOST"],
+            url_scheme=self.app.config["JSONSCHEMAS_URL_SCHEME"],
+        ).build("schema", values={"path": path}, force_external=True)
 
     @cached_property
     def loader_cls(self):
         """Loader class used in `JsonRef.replace_refs`."""
-        cls = self.app.config['JSONSCHEMAS_LOADER_CLS']
+        cls = self.app.config["JSONSCHEMAS_LOADER_CLS"]
         if isinstance(cls, six.string_types):
             return import_string(cls)
         return cls
@@ -177,7 +179,7 @@ class InvenioJSONSchemasState(object):
     @cached_property
     def resolver_cls(self):
         """Loader to resolve the schema."""
-        cls = self.app.config['JSONSCHEMAS_RESOLVER_CLS']
+        cls = self.app.config["JSONSCHEMAS_RESOLVER_CLS"]
         if isinstance(cls, six.string_types):
             return import_string(cls)
         return cls
@@ -190,7 +192,8 @@ class InvenioJSONSchemasState(object):
         """
         store = {}
         local_refresolver_uri_scheme = uri_scheme = self.app.config.get(
-            "JSONSCHEMAS_LOCAL_REFRESOLVER_URI_SCHEME")
+            "JSONSCHEMAS_LOCAL_REFRESOLVER_URI_SCHEME"
+        )
         for schema_uri, schema in self.schemas.items():
             schema = self.get_schema(schema_uri)
             schema_uri = "{uri_scheme}{schema_path}".format(
@@ -226,8 +229,13 @@ class InvenioJSONSchemas(object):
         if app:
             self.init_app(app, **kwargs)
 
-    def init_app(self, app, entry_point_group=None, register_blueprint=True,
-                 register_config_blueprint=None):
+    def init_app(
+        self,
+        app,
+        entry_point_group=None,
+        register_blueprint=True,
+        register_config_blueprint=None,
+    ):
         """Flask application initialization.
 
         :param app: The Flask application.
@@ -240,21 +248,25 @@ class InvenioJSONSchemas(object):
         self.init_config(app)
 
         if not entry_point_group:
-            entry_point_group = self.kwargs['entry_point_group'] \
-                if 'entry_point_group' in self.kwargs \
-                else 'invenio_jsonschemas.schemas'
+            entry_point_group = (
+                self.kwargs["entry_point_group"]
+                if "entry_point_group" in self.kwargs
+                else "invenio_jsonschemas.schemas"
+            )
 
         state = InvenioJSONSchemasState(app)
 
         # Load the json-schemas from extension points.
         if entry_point_group:
-            whitelisted_entries = app.config['JSONSCHEMAS_SCHEMAS']
+            whitelisted_entries = app.config["JSONSCHEMAS_SCHEMAS"]
             # change to set to delete duplicate entries
-            for base_entry in set(importlib_metadata.entry_points(
-                group=entry_point_group
-            )):
-                if whitelisted_entries is None or \
-                        base_entry.name in whitelisted_entries:
+            for base_entry in set(
+                importlib_metadata.entry_points(group=entry_point_group)
+            ):
+                if (
+                    whitelisted_entries is None
+                    or base_entry.name in whitelisted_entries
+                ):
                     directory = os.path.dirname(base_entry.load().__file__)
                     state.register_schemas_dir(directory)
 
@@ -265,23 +277,21 @@ class InvenioJSONSchemas(object):
 
         if register_blueprint:
             app.register_blueprint(
-                create_blueprint(state),
-                url_prefix=app.config['JSONSCHEMAS_ENDPOINT']
+                create_blueprint(state), url_prefix=app.config["JSONSCHEMAS_ENDPOINT"]
             )
 
-        self._state = app.extensions['invenio-jsonschemas'] = state
+        self._state = app.extensions["invenio-jsonschemas"] = state
         return state
 
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
-            if k.startswith('JSONSCHEMAS_'):
+            if k.startswith("JSONSCHEMAS_"):
                 app.config.setdefault(k, getattr(config, k))
 
-        host_setting = app.config['JSONSCHEMAS_HOST']
-        if not host_setting or host_setting == 'localhost':
-            app.logger.warning('JSONSCHEMAS_HOST is set to {0}'.format(
-                host_setting))
+        host_setting = app.config["JSONSCHEMAS_HOST"]
+        if not host_setting or host_setting == "localhost":
+            app.logger.warning("JSONSCHEMAS_HOST is set to {0}".format(host_setting))
 
     def __getattr__(self, name):
         """Proxy to state object."""
@@ -297,8 +307,7 @@ class InvenioJSONSchemasUI(InvenioJSONSchemas):
         :param app: The Flask application.
         """
         return super(InvenioJSONSchemasUI, self).init_app(
-            app,
-            register_config_blueprint='JSONSCHEMAS_REGISTER_ENDPOINTS_UI'
+            app, register_config_blueprint="JSONSCHEMAS_REGISTER_ENDPOINTS_UI"
         )
 
 
@@ -311,6 +320,5 @@ class InvenioJSONSchemasAPI(InvenioJSONSchemas):
         :param app: The Flask application.
         """
         return super(InvenioJSONSchemasAPI, self).init_app(
-            app,
-            register_config_blueprint='JSONSCHEMAS_REGISTER_ENDPOINTS_API'
+            app, register_config_blueprint="JSONSCHEMAS_REGISTER_ENDPOINTS_API"
         )

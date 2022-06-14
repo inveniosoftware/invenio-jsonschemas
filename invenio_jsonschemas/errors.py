@@ -41,8 +41,10 @@ class JSONSchemaDuplicate(JSONSchemaError):
         """
         self.schema = schema
         super(JSONSchemaDuplicate, self).__init__(
-            "Schema {schema} defined in multiple ".format(schema=schema) +
-            "directories: {first} and {second}".format(
-                first=first_dir,
-                second=second_dir),
-            *args, **kwargs)
+            "Schema {schema} defined in multiple ".format(schema=schema)
+            + "directories: {first} and {second}".format(
+                first=first_dir, second=second_dir
+            ),
+            *args,
+            **kwargs
+        )
