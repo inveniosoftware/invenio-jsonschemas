@@ -14,8 +14,6 @@ set -o errexit
 # Quit on unbound symbols
 set -o nounset
 
-pydocstyle invenio_jsonschemas tests docs
-isort invenio_jsonschemas tests --check-only --diff
-check-manifest
-sphinx-build -qnNW docs docs/_build/html
-python setup.py test
+python -m check_manifest
+python -m sphinx.cmd.build -qnNW docs docs/_build/html
+python -m pytest
