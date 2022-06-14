@@ -40,7 +40,7 @@ extensions = [
 extlinks = {
     "source": (
         "https://github.com/inveniosoftware/invenio-jsonschemas/tree/master/%s",  # noqa
-        "source",
+        "source %s",
     )
 }
 
