@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -314,7 +315,7 @@ from __future__ import absolute_import, print_function
 from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, InvenioJSONSchemasUI
 from .proxies import current_jsonschemas
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 
 __all__ = (
     "__version__",
