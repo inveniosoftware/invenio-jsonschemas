@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2022 RERO.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -13,13 +14,11 @@ from __future__ import absolute_import, print_function
 
 import json
 import os
-from urllib.parse import urljoin
+from urllib.parse import urlsplit
 
 import importlib_metadata
-import six
 from flask import request
 from jsonref import JsonRef
-from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
 from werkzeug.utils import cached_property, import_string
@@ -172,7 +171,7 @@ class InvenioJSONSchemasState(object):
     def loader_cls(self):
         """Loader class used in `JsonRef.replace_refs`."""
         cls = self.app.config["JSONSCHEMAS_LOADER_CLS"]
-        if isinstance(cls, six.string_types):
+        if isinstance(cls, str):
             return import_string(cls)
         return cls
 
@@ -180,7 +179,7 @@ class InvenioJSONSchemasState(object):
     def resolver_cls(self):
         """Loader to resolve the schema."""
         cls = self.app.config["JSONSCHEMAS_RESOLVER_CLS"]
-        if isinstance(cls, six.string_types):
+        if isinstance(cls, str):
             return import_string(cls)
         return cls
 
