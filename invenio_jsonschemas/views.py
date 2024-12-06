@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -53,7 +54,9 @@ def create_blueprint(state):
             schema = state.get_schema(
                 schema_path, with_refs=with_refs, resolved=resolved
             )
-            return jsonify(schema)
+            return jsonify(
+                schema.__subject__ if isinstance(schema, JsonRef) else schema
+            )
         else:
             return send_from_directory(schema_dir, schema_path)
 
