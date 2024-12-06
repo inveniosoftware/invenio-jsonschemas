@@ -315,7 +315,7 @@ from __future__ import absolute_import, print_function
 from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, InvenioJSONSchemasUI
 from .proxies import current_jsonschemas
 
-__version__ = "1.1.5"
+__version__ = "2.0.0"
 
 __all__ = (
     "__version__",

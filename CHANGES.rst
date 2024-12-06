@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version 2.0.0 (release 2024-12-05)
+
+- setup: bump major dependencies
+
 Version 1.1.5 (release 2024-11-30)
 
 - fix: SphinxWarning
