@@ -3,7 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2022 RERO.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -16,8 +16,8 @@ import json
 import os
 from urllib.parse import urlsplit
 
-import importlib_metadata
 from flask import request
+from invenio_base.utils import entry_points
 from jsonref import JsonRef
 from werkzeug.exceptions import HTTPException
 from werkzeug.routing import Map, Rule
@@ -259,9 +259,7 @@ class InvenioJSONSchemas(object):
         if entry_point_group:
             whitelisted_entries = app.config["JSONSCHEMAS_SCHEMAS"]
             # change to set to delete duplicate entries
-            for base_entry in set(
-                importlib_metadata.entry_points(group=entry_point_group)
-            ):
+            for base_entry in entry_points(group=entry_point_group):
                 if (
                     whitelisted_entries is None
                     or base_entry.name in whitelisted_entries
