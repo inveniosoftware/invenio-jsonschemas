@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2022 RERO.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -16,12 +17,11 @@ import shutil
 import sys
 import tempfile
 from contextlib import contextmanager
+from importlib.metadata import EntryPoint
 
 import pytest
 from flask import Flask
-from importlib_metadata import EntryPoint
 from mock import patch
-from werkzeug.utils import import_string
 
 
 @pytest.fixture()
@@ -96,17 +96,6 @@ def pkg_factory(tmpdir_factory):
         sys.path.remove(modules_path)
 
 
-# class MockEntryPoint(EntryPoint):
-#     """Mocking of entrypoint."""
-
-#     def load(self):
-#         """Mock load entry point."""
-#         if self.name == 'importfail':
-#             raise ImportError()
-#         else:
-#             return import_string(self.name)
-
-
 class MockEntryPoint(EntryPoint):
     """Mocking of entrypoint."""
 
@@ -125,7 +114,11 @@ def mock_entry_points():
 
         def add(self, group, name, module):
             """Register additional entrypoints."""
-            entry_points[name] = [MockEntryPoint(name=name, value=module, group=group)]
+            if group not in entry_points:
+                entry_points[group] = []
+            entry_points[group].append(
+                MockEntryPoint(name=name, value=module, group=group)
+            )
 
     def fn(group=None):
         if group:
@@ -137,5 +130,5 @@ def mock_entry_points():
             return entry_points_group
         return entry_points
 
-    with patch("importlib_metadata.entry_points", fn):
+    with patch("importlib.metadata.entry_points", fn):
         yield EntryPointBuilder()
