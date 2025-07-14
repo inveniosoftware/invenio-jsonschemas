@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v2.1.0 (released 2025-07-14)
+
+- global: use entry_points wrapper
+
 Version 2.0.0 (release 2024-12-05)
 
 - setup: bump major dependencies
