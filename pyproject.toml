@@ -1,4 +1,76 @@
-[build-system]
-requires = ["setuptools", "wheel", "babel>2.8"]
-build-backend = "setuptools.build_meta"
+# SPDX-FileCopyrightText: 2015-2018 CERN.
+# SPDX-FileCopyrightText: 2022-2025 Graz University of Technology.
+# SPDX-FileCopyrightText: 2022 Graz University of Technology.
+# SPDX-FileCopyrightText: 2022 RERO.
+# SPDX-FileCopyrightText: 2026 TU Wien.
+# SPDX-License-Identifier: MIT
 
+[project]
+name = "invenio-jsonschemas"
+description = "Invenio module for building and serving JSONSchemas."
+readme = "README.rst"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "CERN", email = "info@inveniosoftware.org" },
+]
+keywords = [
+  "invenio",
+  "json",
+  "jsonschema",
+  "schema",
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+]
+dependencies = [
+  "invenio-base>=2.3.0,<3.0.0",
+  "jsonref>=0.1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/inveniosoftware/invenio-jsonschemas"
+
+[project.entry-points."invenio_base.api_apps"]
+invenio_jsonschemas = "invenio_jsonschemas:InvenioJSONSchemasAPI"
+
+[project.entry-points."invenio_base.apps"]
+invenio_jsonschemas = "invenio_jsonschemas:InvenioJSONSchemasUI"
+
+[project.entry-points."invenio_records.jsonresolver"]
+invenio_jsonschemas = "invenio_jsonschemas.jsonresolver"
+
+[project.optional-dependencies]
+docs = []
+tests = [
+  "jsonresolver[jsonschema]>=0.2.1",
+  "mock>=1.3.0",
+  "pytest-black>=0.6.0",
+  "pytest-invenio>=3.0.0,<4.0.0",
+  "sphinx>=4.5",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "invenio_jsonschemas/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/invenio_jsonschemas",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+add_ignore = "D401"
+
+[tool.pytest.ini_options]
+addopts = '--black --isort --pydocstyle --doctest-glob="*.rst" --doctest-modules --cov=invenio_jsonschemas --cov-report=term-missing'
+filterwarnings = ["ignore::pytest.PytestDeprecationWarning"]
+testpaths = "tests invenio_jsonschemas"
+live_server_scope = "module"
