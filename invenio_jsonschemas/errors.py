@@ -41,5 +41,5 @@ class JSONSchemaDuplicate(JSONSchemaError):
                 first=first_dir, second=second_dir
             ),
             *args,
-            **kwargs
+            **kwargs,
         )
