@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2015-2018 CERN.
 # SPDX-FileCopyrightText: 2024 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 """Invenio-JSONSchemas is a module for building and serving JSON Schemas.
@@ -310,7 +311,7 @@ from __future__ import absolute_import, print_function
 from .ext import InvenioJSONSchemas, InvenioJSONSchemasAPI, InvenioJSONSchemasUI
 from .proxies import current_jsonschemas
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 
 __all__ = (
     "__version__",
